@@ -1,5 +1,4 @@
-# G2 Front-end
-The goal of this part of G2 is to provide a front-end application which interacts with a JSON back-end and renders beautiful pages.
+# 12-urenloop
 
 ## Getting started
 
