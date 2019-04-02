@@ -36,6 +36,7 @@ export class State {
       modelPaths: [
         __dirname + '/models/**/*.model.ts',
       ],
+      operatorsAliases: false,
       ...this.config.dbConfig
     });
   }
