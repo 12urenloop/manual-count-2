@@ -1,8 +1,10 @@
 import express from "express";
 import winston from "winston";
 
-import { State, StateConfig, Status, Team } from './state';
+import { SequelizeConfig } from 'sequelize-typescript/lib/types/SequelizeConfig';
 import { TransformableInfo } from "logform";
+
+import { State, StateConfig, Status, Team } from './state';
 
 type LogLevel = 'debug' | 'info' | 'warning' | 'error' | 'error' | 'crit' | 'alert' | 'emerg';
 
@@ -12,6 +14,7 @@ interface Config {
   teams: string[];
   minSecondsBetweenBumps: number;
   consoleLogLevel: LogLevel;
+  dbConfig: SequelizeConfig;
 }
 
 const defaultConfig: Config = {
@@ -25,6 +28,10 @@ const defaultConfig: Config = {
     'team03_vek',
     'team04_wvk'
   ],
+  dbConfig: {
+    'dialect': 'sqlite',
+    'storage': './database.sqlite3',
+  }
 }
 
 function main() {
@@ -62,7 +69,8 @@ function main() {
     ],
   });
 
-  const stateConfig: StateConfig = { minSecondsBetweenBumps: 10 };
+  const { minSecondsBetweenBumps, dbConfig } = config;
+  const stateConfig: StateConfig = { minSecondsBetweenBumps, dbConfig };
   const state = new State({
     logger,
     teams: config.teams,

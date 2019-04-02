@@ -1,4 +1,6 @@
 import winston from "winston";
+import { Sequelize } from "sequelize-typescript";
+import { SequelizeConfig } from "sequelize-typescript/lib/types/SequelizeConfig";
 
 export interface StateOptions {
   logger: winston.Logger;
@@ -8,12 +10,14 @@ export interface StateOptions {
 
 export interface StateConfig {
   minSecondsBetweenBumps: number // in seconds;
+  dbConfig: SequelizeConfig;
 }
 
 export class State {
   private logger: winston.Logger;
   private teams: Team[];
   private config: StateConfig;
+  private db: Sequelize;
 
   constructor(options: StateOptions) {
     const { logger, teams, config } = options;
@@ -26,7 +30,14 @@ export class State {
         laps: 0,
         unixTimeStampWhenBumpable: Date.now(),
       }
-    }))
+    }));
+
+    this.db = new Sequelize({
+      modelPaths: [
+        __dirname + '/models/**/*.model.ts',
+      ],
+      ...this.config.dbConfig
+    });
   }
 
   /**
