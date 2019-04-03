@@ -4,14 +4,14 @@ import winston from "winston";
 import { SequelizeConfig } from 'sequelize-typescript/lib/types/SequelizeConfig';
 import { TransformableInfo } from "logform";
 
-import { State, StateConfig, Status, Team } from './state';
+import { State, StateConfig, Status, TeamResult } from './state';
 
 type LogLevel = 'debug' | 'info' | 'warning' | 'error' | 'error' | 'crit' | 'alert' | 'emerg';
 
 interface Config {
   port: number;
   logDirectory: string;
-  teams: string[];
+  seedTeams: string[];
   minSecondsBetweenBumps: number;
   consoleLogLevel: LogLevel;
   dbConfig: SequelizeConfig;
@@ -22,7 +22,7 @@ const defaultConfig: Config = {
   logDirectory: './logs',
   minSecondsBetweenBumps: 15,
   consoleLogLevel: 'debug',
-  teams: [
+  seedTeams: [
     'team01_vtk',
     'team02_hilok',
     'team03_vek',
@@ -73,7 +73,7 @@ function main() {
   const stateConfig: StateConfig = { minSecondsBetweenBumps, dbConfig };
   const state = new State({
     logger,
-    teams: config.teams,
+    teams: config.seedTeams,
     config: stateConfig,
   });
 
@@ -83,7 +83,6 @@ function main() {
     next();
   });
 
-  // 
   app.get('/', async (req, res, next) => {
     try {
       res.send("This is Count Manuel speaking!");
@@ -92,10 +91,19 @@ function main() {
     }
   });
 
+  app.post('/teams/seed', async (req, res, next) => {
+    try {
+      const teams = await state.addTeams(config.seedTeams);
+      res.send(teams);
+    } catch (err) {
+      next(err);
+    }
+  });
+
   // Get status for all teams 
   app.get('/teams', async (req, res, next) => {
     try {
-      const teams: Team[] = await state.getTeams();
+      const teams: TeamResult[] = await state.getTeams();
       res.send({ teams });
     } catch (err) {
       next(err);
@@ -107,7 +115,7 @@ function main() {
     try {
       const teamId = parseInt(req.params.id, 10);
       const newStatus: Status = await state.bumpLapCount(teamId);
-      const teams: Team[] = await state.getTeams();
+      const teams: TeamResult[] = await state.getTeams();
       res.send({ teams, newLapCount: newStatus });
     } catch (err) {
       next(err);

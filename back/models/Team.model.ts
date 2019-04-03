@@ -25,8 +25,9 @@ export class Team extends Model<Team> {
   lastBumpAt!: number;
 
   @BeforeCreate
-  static initializeLastBump(instance: Team) {
+  static initialize(instance: Team) {
     instance.lastBumpAt = Date.now();
+    instance.lapCount = 0;
   }
 
   @CreatedAt

@@ -1,10 +1,13 @@
 import winston from "winston";
+
 import { Sequelize } from "sequelize-typescript";
 import { SequelizeConfig } from "sequelize-typescript/lib/types/SequelizeConfig";
 
+import { Team } from "../models/Team.model";
+import { BumpRequest } from "../models/BumpRequest.model";
+
 export interface StateOptions {
   logger: winston.Logger;
-  teams: string[];
   config: StateConfig;
 }
 
@@ -15,23 +18,15 @@ export interface StateConfig {
 
 export class State {
   private logger: winston.Logger;
-  private teams: Team[];
   private config: StateConfig;
   private db: Sequelize;
 
   constructor(options: StateOptions) {
-    const { logger, teams, config } = options;
+    const { logger, config } = options;
     this.logger = logger;
     this.config = config;
-    this.teams = teams.map((name, id) => ({
-      id,
-      name,
-      status: {
-        laps: 0,
-        unixTimeStampWhenBumpable: Date.now(),
-      }
-    }));
 
+    // Set up database
     this.db = new Sequelize({
       modelPaths: [
         __dirname + '/models/**/*.model.ts',
@@ -39,6 +34,7 @@ export class State {
       operatorsAliases: false,
       ...this.config.dbConfig
     });
+    this.db.sync();
   }
 
   /**
@@ -46,7 +42,15 @@ export class State {
    * 
    * @param teamId the id of the team you want to bump the lap count for
    */
-  public bumpLapCount(teamId: number): Status {
+  public async bumpLapCount(teamId: number): Promise<Status> {
+    try {
+      const team = await Team.findByPk(teamId);
+      this.logger.info(`[state] Received bump request for ${this.formatTeam(team)}`);
+
+    } catch (err) {
+      return Promise.reject(new NonExistingTeamError(teamId));
+    }
+
     // Check if actual team
     if (teamId < this.teams.length) {
       const team = this.teams[teamId];
@@ -65,11 +69,24 @@ export class State {
     }
   }
 
+
+  public async addTeams(names: string[]): Promise<Team[]> {
+    return Team.bulkCreate(names.map((name) => ({ name })));
+  }
+
   /**
    * Dump the status of all teams
    */
-  public getTeams(): Team[] {
-    return JSON.parse(JSON.stringify(this.teams));
+  public async getTeams(): Promise<TeamResult[]> {
+    const teams = await Team.findAll();
+    return teams.map(({ id, name, lapCount, lastBumpAt }) => ({
+      id,
+      name,
+      status: {
+        laps: lapCount,
+        unixTimeStampWhenBumpable: lastBumpAt + this.config.minSecondsBetweenBumps * 1000,
+      }
+    }));
   }
 
   /**
@@ -77,11 +94,11 @@ export class State {
    * @param team the team to format
    */
   private formatTeam(team: Team): string {
-    return `${team.name} (${team.id})`;
+    return `${team} (${team.id})`;
   }
 }
 
-export interface Team {
+export interface TeamResult {
   id: number,
   name: string,
   status: Status;
