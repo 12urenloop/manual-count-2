@@ -13,6 +13,12 @@ yarn run build
 yarn run start
 ```
 
+## Running in development
+
+```bash
+yarn run dev
+```
+
 ## Note
 
 This project makes use of [Sequelize](http://docs.sequelizejs.com/). Also check out:
