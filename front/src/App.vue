@@ -11,6 +11,7 @@
 
 <script>
     import Footer from "./components/Footer.vue";
+    import TeamManager from "./team/TeamManager";
 
     import "vuetify/dist/vuetify.min.css";
 
@@ -18,6 +19,16 @@
         name: "App",
         components: {
             Footer
+        },
+        created() {
+            // Create a TeamManager.
+            let teamManager = new TeamManager();
+
+            // Fetch the teams from the backend.
+            teamManager.updateTeams();
+
+            // Store the teammanager as state, so it could be accessed from everywhere in the application.
+            this.$store.teamManager = teamManager;
         }
     };
 </script>

@@ -1,4 +1,5 @@
 import Home from "./views/Home";
+import Teams from "./views/Teams";
 
 export default {
     routes: [
@@ -6,14 +7,25 @@ export default {
             path: "/",
             name: "Home",
             component: Home
+        },
+
+        {
+            path: "/teams",
+            name: "Teams",
+            component: Teams
         }
     ],
 
-    endpoints: {
-        counter: "http://localhost:73748/"
+    backend: {
+        url: "http://localhost:3000",
+        endpoints: {
+            teams_overview: "/teams",
+            teams_count: "/teams/count/{}",
+            teams_add: "/teams/add/{}"
+        }
     },
 
-    team: {
-        click_delay: 5,
+    teams: {
+        delay: 30
     }
 };
