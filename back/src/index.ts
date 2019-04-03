@@ -1,44 +1,13 @@
 import express from "express";
 import winston from "winston";
 
-import { SequelizeConfig } from 'sequelize-typescript/lib/types/SequelizeConfig';
 import { TransformableInfo } from "logform";
 
 import { State, StateConfig, Status, TeamResult } from './state';
+import { config } from './config';
 
-type LogLevel = 'debug' | 'info' | 'warning' | 'error' | 'error' | 'crit' | 'alert' | 'emerg';
-
-interface Config {
-  port: number;
-  logDirectory: string;
-  seedTeams: string[];
-  minSecondsBetweenBumps: number;
-  consoleLogLevel: LogLevel;
-  dbConfig: SequelizeConfig;
-}
-
-const defaultConfig: Config = {
-  port: 3000,
-  logDirectory: './logs',
-  minSecondsBetweenBumps: 15,
-  consoleLogLevel: 'debug',
-  seedTeams: [
-    'team01_vtk',
-    'team02_hilok',
-    'team03_vek',
-    'team04_wvk'
-  ],
-  dbConfig: {
-    'dialect': 'sqlite',
-    'storage': './database.sqlite3',
-  }
-}
-
-function main() {
+async function main() {
   const app = express();
-
-  // TODO Read external config
-  const config: Config = defaultConfig;
 
   const lineFormat = (info: TransformableInfo) =>
     `${info.metadata.timestamp} ${info.level} ${info.message}`;
@@ -73,9 +42,9 @@ function main() {
   const stateConfig: StateConfig = { minSecondsBetweenBumps, dbConfig };
   const state = new State({
     logger,
-    teams: config.seedTeams,
     config: stateConfig,
   });
+  await state.initialize();
 
   // Middleware for loggin all requests
   app.use((req, _res, next) => {
@@ -86,15 +55,6 @@ function main() {
   app.get('/', async (req, res, next) => {
     try {
       res.send("This is Count Manuel speaking!");
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  app.post('/teams/seed', async (req, res, next) => {
-    try {
-      const teams = await state.addTeams(config.seedTeams);
-      res.send(teams);
     } catch (err) {
       next(err);
     }
@@ -115,8 +75,7 @@ function main() {
     try {
       const teamId = parseInt(req.params.id, 10);
       const newStatus: Status = await state.bumpLapCount(teamId);
-      const teams: TeamResult[] = await state.getTeams();
-      res.send({ teams, newLapCount: newStatus });
+      res.send(newStatus);
     } catch (err) {
       next(err);
     }
@@ -131,4 +90,6 @@ function main() {
 
 
 
-main();
+main()
+  .then(() => "Exited succeselly!")
+  .catch((err) => console.error(err));

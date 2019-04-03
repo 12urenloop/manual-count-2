@@ -10,8 +10,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
-    "start": "ts-node src/index.ts",
-    "db": "sequelize"
+    "start": "yarn run build && node dist/index.js",
+    "seed": "ts-node seed.ts",
+    "db": "sequelize",
+    "clean": "rm -r dist"
   },
   "nodemonConfig": {
     "ignore": [
