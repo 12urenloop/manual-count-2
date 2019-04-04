@@ -12,7 +12,6 @@
     "dev": "nodemon",
     "start": "yarn run build && node dist/index.js",
     "seed": "ts-node scripts/seed.ts",
-    "db": "sequelize",
     "clean": "rm -r dist"
   },
   "nodemonConfig": {

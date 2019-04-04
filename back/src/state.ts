@@ -73,7 +73,11 @@ export class State {
    * Dump the status of all teams
    */
   public async getTeams(): Promise<TeamResult[]> {
-    const teams = await Team.findAll();
+    const teams = await Team.findAll({
+      order: [
+        ['id', 'ASC']
+      ]
+    });
     return teams.map((team) => {
       const { id, name } = team;
       return { id, name, status: this.toStatus(team) };
