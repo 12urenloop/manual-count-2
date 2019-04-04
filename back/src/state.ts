@@ -20,11 +20,13 @@ export class State {
   private logger: winston.Logger;
   private config: StateConfig;
   private db: Sequelize;
+  private delay: number;
 
   constructor(options: StateOptions) {
     const { logger, config } = options;
     this.logger = logger;
     this.config = config;
+    this.delay = config.minSecondsBetweenBumps * 1000;
 
     // Set up database
     this.db = new Sequelize({
@@ -48,12 +50,22 @@ export class State {
       this.logger.error(`[state] Received bump request for non-existing team ${teamId}`);
       return Promise.reject(new NonExistingTeamError(teamId));
     }
+
+    // Register the request
     this.logger.info(`[state] Received bump request for ${this.formatTeam(team)}`);
+    await BumpRequest.create(new BumpRequest({ teamId }))
+
+    // If the bump is too early, we don't update the state
+    const now = Date.now();
+    if (now < team.lastBumpAt + this.delay) {
+      return this.toStatus(team);
+    }
+
     team = await team.update({
       'lapCount': team.lapCount + 1,
-      'lastBumpAt': Date.now(),
+      'lastBumpAt': now,
     });
-    await BumpRequest.create(new BumpRequest({ teamId }))
+
     this.logger.info(`[state] ${this.formatTeam(team)} increased to lap count ${team.lapCount}`);
     return this.toStatus(team);
   }
@@ -73,7 +85,7 @@ export class State {
     const { lapCount, lastBumpAt } = team;
     return {
       lapCount: lapCount,
-      unixTimeStampWhenBumpable: lastBumpAt + this.config.minSecondsBetweenBumps * 1000,
+      unixTimeStampWhenBumpable: lastBumpAt + this.delay,
     }
   }
 
