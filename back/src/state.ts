@@ -73,7 +73,7 @@ export class State {
     const { lapCount, lastBumpAt } = team;
     return {
       lapCount: lapCount,
-      unixTimeStampWhenBumpable: lastBumpAt * this.config.minSecondsBetweenBumps * 1000,
+      unixTimeStampWhenBumpable: lastBumpAt + this.config.minSecondsBetweenBumps * 1000,
     }
   }
 
