@@ -47,7 +47,7 @@ async function main() {
   await state.initialize();
 
   // Allow cross control origin.
-  app.use(function(req, res, next) {
+  app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -81,7 +81,18 @@ async function main() {
   app.post('/teams/:id/bump', async (req, res, next) => {
     try {
       const teamId = parseInt(req.params.id, 10);
-      const newStatus: Status = await state.bumpLapCount(teamId);
+      const timestamp = parseInt(req.query.timestamp);
+
+      if (!timestamp) {
+        throw new Error("No timestamp given");
+      }
+
+      // The frontend and backend can be at most 3 hours out of sync
+      if (timestamp > Date.now() + 3 * 3600 * 1000) {
+        throw new Error("Invalid timestamp (too late)");
+      }
+
+      const newStatus: Status = await state.bumpLapCount(teamId, timestamp);
       res.send(newStatus);
     } catch (err) {
       next(err);

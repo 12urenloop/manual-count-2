@@ -44,7 +44,7 @@ export class State {
    * 
    * @param teamId the id of the team you want to bump the lap count for
    */
-  public async bumpLapCount(teamId: number): Promise<Status> {
+  public async bumpLapCount(teamId: number, timestamp: number): Promise<Status> {
     let team = await Team.findByPrimary(teamId);
     if (!team) {
       this.logger.error(`[state] Received bump request for non-existing team ${teamId}`);
@@ -56,14 +56,13 @@ export class State {
     await BumpRequest.create(new BumpRequest({ teamId }))
 
     // If the bump is too early, we don't update the state
-    const now = Date.now();
-    if (now < team.lastBumpAt + this.delay) {
+    if (timestamp < team.lastBumpAt + this.delay) {
       return this.toStatus(team);
     }
 
     team = await team.update({
       'lapCount': team.lapCount + 1,
-      'lastBumpAt': now,
+      'lastBumpAt': timestamp,
     });
 
     this.logger.info(`[state] ${this.formatTeam(team)} increased to lap count ${team.lapCount}`);
