@@ -11,6 +11,7 @@
 
 <script>
     import Footer from "./components/Footer.vue";
+    import TeamManager from "./team/TeamManager";
 
     import "vuetify/dist/vuetify.min.css";
 
