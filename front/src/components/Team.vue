@@ -1,6 +1,6 @@
 <template>
     <v-flex xs12 md6 lg3>
-        <v-card class="team" v-on:click="queueLap" ripple :color="onDelay() ? 'grey' : ''">
+        <v-card class="team" v-on:click="queueLap" :color="onDelay() ? 'grey' : ''" :ripple="!onDelay()">
             <v-card-text class="team__content">
                 <div class="team__counter">{{ team.id }}</div>
                 <div class="team__information">
