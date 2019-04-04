@@ -46,6 +46,13 @@ async function main() {
   });
   await state.initialize();
 
+  // Allow cross control origin.
+  app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
   // Middleware for loggin all requests
   app.use((req, _res, next) => {
     logger.info(`[express.request] ${req.method} ${req.originalUrl}`);
