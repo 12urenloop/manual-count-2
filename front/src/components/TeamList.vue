@@ -1,5 +1,10 @@
 <template>
-    <v-data-table :headers="headers" :items="teams">
+    <v-data-table
+        :headers="headers"
+        :items="teams"
+        :rows-per-page-items="rowsPerPageItems"
+        :pagination.sync="pagination"
+    >
         <template v-slot:items="props">
             <td>{{ props.item.id }}</td>
             <td>{{ props.item.name }}</td>
@@ -28,6 +33,9 @@
                     value: "laps"
                 }
             ],
+            pagination: {
+                rowsPerPage: "100"
+            },
             teams: new Array()
         }),
         created() {
