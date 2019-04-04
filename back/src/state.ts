@@ -83,7 +83,8 @@ export class State {
   private toStatus(team: Team): Status {
     const { lapCount, lastBumpAt } = team;
     return {
-      lapCount: lapCount,
+      lapCount,
+      lastBumpAt,
       unixTimeStampWhenBumpable: lastBumpAt + this.delay,
     }
   }
@@ -105,6 +106,7 @@ export interface TeamResult {
 
 export interface Status {
   lapCount: number,
+  lastBumpAt: number,
   unixTimeStampWhenBumpable: number;
 }
 
