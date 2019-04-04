@@ -13,11 +13,22 @@ async function seed() {
   });
 
   const teams = [
-    'hilok',
     'vtk',
-    'vek',
+    'hilok',
+    'vlk',
+    'vek/ml',
+    'wetenschappen',
+    'sk',
+    'vgk',
+    'hk',
+    'politea',
+    'vrg',
+    'blandinia',
     'vppk',
-    'wvk'
+    'wvk',
+    'hermes/veto/lila',
+    'lombriosiana/vbk',
+    'regent'
   ];
 
 
