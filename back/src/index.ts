@@ -128,5 +128,5 @@ async function main() {
 
 
 main()
-  .then(() => "Exited succeselly!")
+  .then(() => "Exited successfully!")
   .catch((err) => console.error(err));
