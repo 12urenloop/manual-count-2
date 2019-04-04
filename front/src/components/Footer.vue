@@ -1,5 +1,5 @@
 <template>
-    <v-footer class="footer">
+    <v-footer class="footer__dark">
         <v-layout wrap justify-space-between text-xs-center>
             <v-flex xs12 sm2></v-flex>
             <v-flex xs12 sm7>
@@ -21,8 +21,10 @@
 </script>
 
 <style scoped>
-    .footer {
+    .footer__dark {
         min-height: 75px;
+        color: white !important;
+        background-color: rgb(141, 141, 141) !important;
     }
 
     .footer__zeus {

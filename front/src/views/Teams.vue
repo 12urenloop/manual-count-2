@@ -7,13 +7,7 @@
                 </v-card-title>
 
                 <v-card-text>
-                    <v-data-table :headers="headers" :items="teams">
-                        <template v-slot:items="props">
-                            <td>{{ props.item.id }}</td>
-                            <td>{{ props.item.name }}</td>
-                            <td>{{ props.item.status.lapCount }}</td>
-                        </template>
-                    </v-data-table>
+                    <TeamList/>
                 </v-card-text>
             </v-card>
         </v-flex>
@@ -21,28 +15,13 @@
 </template>
 
 <script>
+
+    import TeamList from "../components/TeamList.vue";
+
     export default {
         name: "Teams",
-        data: () => ({headers: [
-                {
-                    text: "ID",
-                    value: "id"
-                },
-
-                {
-                    text: "Name",
-                    value: "name"
-                },
-
-                {
-                    text: "Laps",
-                    value: "laps"
-                }
-            ],
-            teams: new Array()
-        }),
-        created() {
-            this.teams = this.$store.state.teamManager.teams;
+        components: {
+            TeamList
         }
     };
 </script>

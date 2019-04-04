@@ -1,5 +1,6 @@
 import Home from "./views/Home";
 import Teams from "./views/Teams";
+import Admin from "./views/Admin";
 
 export default {
     routes: [
@@ -13,6 +14,12 @@ export default {
             path: "/teams",
             name: "Teams",
             component: Teams
+        },
+
+        {
+            path: "/admin",
+            name: "Admin",
+            component: Admin
         }
     ],
 
