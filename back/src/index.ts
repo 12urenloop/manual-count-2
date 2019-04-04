@@ -67,7 +67,26 @@ async function main() {
     }
   });
 
+  app.get('/time', async (req, res, next) => {
+    try {
+      res.send({
+        time: Date.now()
+      })
+    } catch (err) {
+      next(err);
+    }
+  });
+
   // Get status for all teams 
+  app.get('/teams', async (req, res, next) => {
+    try {
+      const teams: TeamResult[] = await state.getTeams();
+      res.send({ teams });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   app.get('/teams', async (req, res, next) => {
     try {
       const teams: TeamResult[] = await state.getTeams();
