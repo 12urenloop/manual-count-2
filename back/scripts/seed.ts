@@ -28,7 +28,7 @@ async function seed() {
     'wvk',
     'hermes/veto/lila',
     'lombriosiana/vbk',
-    'regent'
+    'antilopen'
   ];
 
 
