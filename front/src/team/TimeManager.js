@@ -17,16 +17,17 @@ export class TimeManager {
     fetchTime() {
 
         // Fetch the time using axios.
-        axios.get(Config.backend.url + Config.backend.endpoints.time)      
-        .then((response) => {
-            this.serverTime = response.data.time;
-        })
+        axios.get(Config.backend.url + Config.backend.endpoints.time)
+            .then((response) => {
+                this.serverTime = response.data.time;
+            })
 
-        .catch((error) => {
+            .catch((error) => {
 
-            // Log the error to the console.
-            console.log(error);
-        });
+                // Log the error to the console.
+                // eslint-disable-next-line no-console
+                console.log(error);
+            });
     }
 
     /**

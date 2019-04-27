@@ -24,7 +24,7 @@ export default {
     ],
 
     backend: {
-        url: "http://10.0.0.174:3000",
+        url: "http://localhost:3000",
         endpoints: {
             teams_overview: "/teams",
             teams_count: "/teams/{}/bump?timestamp={}",

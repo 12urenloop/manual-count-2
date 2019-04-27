@@ -31,23 +31,22 @@ export class TeamManager {
      * Update the teamlist in memory.
      */
     updateTeams() {
-        
+
         // Fetch the teams using axios.
-        axios.get(Config.backend.url + Config.backend.endpoints.teams_overview)      
+        axios.get(Config.backend.url + Config.backend.endpoints.teams_overview)
             .then((response) => {
 
                 // Update the representation in memory.
                 this.teams.length = 0;
-                
+
                 // Push all the received teams to the teams list.
                 response.data.teams.forEach((team) => {
                     this.teams.push(team);
                 });
             })
-
             .catch((error) => {
-
                 // Log the error to the console.
+                // eslint-disable-next-line no-console
                 console.log(error);
             });
     }
@@ -60,7 +59,7 @@ export class TeamManager {
 
         // Check if the local storage contains a queue list.
         // If false, create a list.
-        if(!localStorage.queue) {
+        if (!localStorage.queue) {
             localStorage.queue = JSON.stringify(new Array());
         }
 
@@ -86,14 +85,14 @@ export class TeamManager {
     startTaskLaps() {
 
         setInterval(() => {
-            
+
             // Only do something when the queue exists.
-            if(localStorage.queue) {
+            if (localStorage.queue) {
                 let queue = JSON.parse(localStorage.queue);
 
                 // Go over every entry in the queue.
                 // Stop the loop when one request failed.
-                for(let entry of queue) {
+                for (let entry of queue) {
                     this.postLap(queue, entry);
                 }
             }
@@ -108,12 +107,11 @@ export class TeamManager {
      */
     async postLap(queue, entry) {
 
-        if(queue.indexOf(entry) >= 0) {
+        if (queue.indexOf(entry) >= 0) {
 
             // Execute a post request to the server.
-            return await axios.post(Config.backend.url + Config.backend.endpoints.teams_count.replace("{}", entry.id).replace("{}", entry.timestamp))
-            .then((response) => {
-
+            try {
+                await axios.post(Config.backend.url + Config.backend.endpoints.teams_count.replace("{}", entry.id).replace("{}", entry.timestamp))
                 // Remove the entry from the queue.
                 delete queue[queue.indexOf(entry)];
 
@@ -122,17 +120,11 @@ export class TeamManager {
 
                 // Update the local storage.
                 localStorage.queue = queue === null ? JSON.stringify(queue) : JSON.stringify(new Array());
-
-                return true;
-            })
-
-            .catch((error) => {
-
-                // Log the error to the console.
-                console.log(error);
-
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.log(err);
                 return false;
-            });
+            }
         }
     }
 }
