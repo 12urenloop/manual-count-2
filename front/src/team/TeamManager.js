@@ -15,12 +15,16 @@ class TeamManager {
     constructor() {
         this.teams = new Array();
         Queue.workers({ BumpLapWorker });
-        this.queue = new Queue();
+        this.queue = new Queue({
+            storage: "localstorage",
+            timeout: 0.2,
+            principle: Queue.FIFO,
+        });
         this.channel = this.queue.create("send-bump");
 
         this.channel.start();
 
-        // Create a task that will update the teams every 5 seconds.
+        // Create a task that updates the teams
         setInterval(() => {
             this.updateTeams();
         }, config.teams.delay_refresh * 1000);

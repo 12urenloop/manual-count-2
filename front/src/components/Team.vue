@@ -77,10 +77,13 @@ export default {
       return "team__lastSeenOK";
     },
 
+    localBumpableAt() {
+      return this.lastLocalBump + config.teams.delay_bumpable * 1000;
+    },
+
     waitForAmount() {
-      const delay = config.teams.delay_bumpable * 1000;
       const bumpAbleAt = Math.max(
-        this.lastLocalBump + delay,
+        this.localBumpableAt,
         this.team.status.unixTimeStampWhenBumpable
       );
       const waitAmount = Math.max(0, bumpAbleAt - this.now) / 1000;
@@ -91,7 +94,7 @@ export default {
   methods: {
     canAlreadyBump() {
       const bumpAbleAt = this.team.status.unixTimeStampWhenBumpable;
-      return bumpAbleAt <= this.now;
+      return bumpAbleAt <= this.now && this.localBumpableAt <= this.now;
     },
 
     addLap() {
@@ -130,7 +133,7 @@ export default {
 }
 
 .team__disabled {
-  background-color: grey;
+  background-color: grey !important;
 }
 
 .team__lastSeenAt {
