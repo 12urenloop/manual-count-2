@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 md6 lg3>
+  <v-flex xs3 md3 lg3>
     <v-card
       :class="`team ${waitForAmount ? 'team__disabled' : ''}`"
       v-on:click="addLap"
