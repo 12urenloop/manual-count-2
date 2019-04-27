@@ -1,6 +1,10 @@
 <template>
   <v-flex xs12 md6 lg3>
-    <v-card class="team" v-on:click="addLap" :ripple="canAlreadyBump()">
+    <v-card
+      :class="`team ${waitForAmount ? 'team__disabled' : ''}`"
+      v-on:click="addLap"
+      :ripple="canAlreadyBump()"
+    >
       <v-card-text class="team__content">
         <div class="team__counter">{{ team.id }}</div>
         <div class="team__information">
@@ -15,7 +19,7 @@
         </div>
         <div class="team__messages">
           <div :class="`team__lastSeenAt ${lastSeenClass}`">Last seen {{lastSeenAt}}s ago</div>
-          <div class="team__wait">Wait for</div>
+          <div class="team__wait">{{waitForAmount ? `Wait for ${waitForAmount}` : ''}}</div>
         </div>
       </v-card-text>
     </v-card>
@@ -35,18 +39,22 @@ export default {
   },
 
   data: () => ({
-    lastLocalBump: 0
+    lastLocalBump: 0,
+    now: timeManager.now()
   }),
 
   created() {
     this.lastLocalBump = this.team.status.lastBumpAt;
+    var self = this;
+    setInterval(function() {
+      self.now = timeManager.now();
+    }, 1000);
   },
 
   computed: {
     lastSeenAt() {
       const lastSeen = this.team.status.lastBumpAt;
-      const now = timeManager.now();
-      return Math.ceil((now - lastSeen) / 1000);
+      return Math.ceil((this.now - lastSeen) / 1000);
     },
 
     lastSeenWarning() {
@@ -67,23 +75,30 @@ export default {
       }
 
       return "team__lastSeenOK";
+    },
+
+    waitForAmount() {
+      const delay = config.teams.delay_bumpable * 1000;
+      const bumpAbleAt = Math.max(
+        this.lastLocalBump + delay,
+        this.team.status.unixTimeStampWhenBumpable
+      );
+      const waitAmount = Math.max(0, bumpAbleAt - this.now) / 1000;
+      return Math.ceil(waitAmount);
     }
   },
 
   methods: {
     canAlreadyBump() {
       const bumpAbleAt = this.team.status.unixTimeStampWhenBumpable;
-      const now = timeManager.now();
-      return bumpAbleAt <= now;
+      return bumpAbleAt <= this.now;
     },
 
     addLap() {
       // Check if the wait time is already expired.
       // If not, don't queue a lap.
-      console.log("Bump before");
       if (this.canAlreadyBump()) {
         // Queue a lap
-        console.log("Bump");
         this.lastLocalBump = timeManager.now();
         teamManager.queueLap(this.team.id);
       }
@@ -112,6 +127,10 @@ export default {
 
 .team__information {
   margin-bottom: 10px;
+}
+
+.team__disabled {
+  background-color: grey;
 }
 
 .team__lastSeenAt {

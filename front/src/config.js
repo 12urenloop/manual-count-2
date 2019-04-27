@@ -38,7 +38,7 @@ export const config = {
         delay_bumpable: 15,
         delay_warning: 90,
         delay_error: 120,
-        delay_refresh: 1,
+        delay_refresh: 3,
         delay_post_lap: 1,
     }
 };

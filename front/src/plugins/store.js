@@ -12,9 +12,12 @@ export const store = new Vuex.Store({
     mutations: {
         updateAllTeams(state, teams) {
             state.teams = { ...teams };
+
         },
         updateTeam(state, { id, status }) {
-            state.teams = { ...state.teams, id: { ...state.teams[id], status } }
+            const teams = { ...state.teams };
+            teams[id].status = status;
+            state.teams = teams;
         }
     }
 });

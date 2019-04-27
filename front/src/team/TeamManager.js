@@ -78,8 +78,9 @@ class BumpLapWorker {
             .replace("{}", id)
             .replace("{}", timestamp);
         try {
-            const status = await axios.post(config.backend.url + endpoint);
-            store.commit('updateCommit', { id, status });
+            const res = await axios.post(config.backend.url + endpoint);
+            const status = res.data;
+            store.commit('updateTeam', { id, status });
             return Promise.resolve(true);
         } catch (err) {
             // eslint-disable-next-line no-console
