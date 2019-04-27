@@ -18,5 +18,6 @@ export const config: Config = {
   dbConfig: {
     'dialect': 'sqlite',
     'storage': './database.sqlite3',
+    'logging': false,
   }
 }

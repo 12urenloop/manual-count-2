@@ -65,7 +65,7 @@ export class State {
       'lastBumpAt': timestamp,
     });
 
-    this.logger.info(`[state] ${this.formatTeam(team)} increased to lap count ${team.lapCount}`);
+    this.logger.info(`[state] ${this.formatTeam(team)} increased to ${team.lapCount}`);
     return this.toStatus(team);
   }
 
@@ -98,7 +98,7 @@ export class State {
    * @param team the team to format
    */
   private formatTeam(team: Team): string {
-    return `${team} (${team.id})`;
+    return `${team.name} (${team.id})`;
   }
 }
 

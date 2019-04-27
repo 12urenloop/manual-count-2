@@ -1,5 +1,6 @@
 import express from "express";
 import winston from "winston";
+import cors from "cors";
 
 import { TransformableInfo } from "logform";
 
@@ -8,6 +9,7 @@ import { config } from './config';
 
 async function main() {
   const app = express();
+  app.use(cors());
 
   const lineFormat = (info: TransformableInfo) =>
     `${info.metadata.timestamp} ${info.level} ${info.message}`;
