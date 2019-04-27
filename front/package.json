@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "storage-based-queue": "^1.2.6",
     "vue": "^2.6.6",
     "vue-router": "^3.0.2",
     "vue-wow": "^1.1.4",

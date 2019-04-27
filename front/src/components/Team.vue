@@ -1,11 +1,6 @@
 <template>
   <v-flex xs12 md6 lg3>
-    <v-card
-      class="team"
-      v-on:click="queueLap"
-      :color="onDelay() ? 'grey' : ''"
-      :ripple="!onDelay()"
-    >
+    <v-card class="team" v-on:click="addLap" :ripple="canAlreadyBump()">
       <v-card-text class="team__content">
         <div class="team__counter">{{ team.id }}</div>
         <div class="team__information">
@@ -19,11 +14,8 @@
           </div>
         </div>
         <div class="team__messages">
-          <div
-            :class="delay_warning_red ? 'team__warning__red' : ''"
-            :color="delay_warning_red "
-          >{{ delay_warning_message }}</div>
-          <div class="team__wait">{{ delay_message }}</div>
+          <div :class="`team__lastSeenAt ${lastSeenClass}`">Last seen {{lastSeenAt}}s ago</div>
+          <div class="team__wait">Wait for</div>
         </div>
       </v-card-text>
     </v-card>
@@ -31,7 +23,10 @@
 </template>
 
 <script>
-import Config from "../config";
+import { config } from "../config";
+
+import { teamManager } from "../team/TeamManager";
+import { timeManager } from "../team/TimeManager";
 
 export default {
   name: "Team",
@@ -40,94 +35,57 @@ export default {
   },
 
   data: () => ({
-    delay_message: "",
-    delay_warning_message: "",
-    delay_warning_red: false
+    lastLocalBump: 0
   }),
 
   created() {
-    // Set the delay message.
-    this.setDelayMessage();
+    this.lastLocalBump = this.team.status.lastBumpAt;
+  },
 
-    // Set the warning message.
-    this.setWarningMessage();
+  computed: {
+    lastSeenAt() {
+      const lastSeen = this.team.status.lastBumpAt;
+      const now = timeManager.now();
+      return Math.ceil((now - lastSeen) / 1000);
+    },
 
-    // Create an interval that will update the delay message every half second.
-    setInterval(() => {
-      // Set the delay message.
-      this.setDelayMessage();
+    lastSeenWarning() {
+      return this.lastSeenAt >= config.teams.delay_warning;
+    },
 
-      // Set the warning message.
-      this.setWarningMessage();
-    }, 500);
+    lastSeenError() {
+      return this.lastSeenAt >= config.teams.delay_error;
+    },
+
+    lastSeenClass() {
+      if (this.lastSeenError) {
+        return "team__lastSeenError";
+      }
+
+      if (this.lastSeenWarning) {
+        return "team__lastSeenWarning";
+      }
+
+      return "team__lastSeenOK";
+    }
   },
 
   methods: {
-    onDelay() {
-      return (
-        this.team.status.unixTimeStampWhenBumpable >=
-        this.$store.state.timeManager.getTimestamp()
-      );
+    canAlreadyBump() {
+      const bumpAbleAt = this.team.status.unixTimeStampWhenBumpable;
+      const now = timeManager.now();
+      return bumpAbleAt <= now;
     },
 
-    queueLap() {
+    addLap() {
       // Check if the wait time is already expired.
       // If not, don't queue a lap.
-      if (!this.onDelay()) {
-        // Add 1 to the INTERNAL lap count.
-        this.team.status.lapCount += 1;
-
-        // Set the INTERNAL delay.
-        this.team.status.unixTimeStampWhenBumpable =
-          this.$store.state.timeManager.getTimestamp() +
-          Config.teams.delay_bumpable * 1000;
-
-        // Set the INTERNAL last seen.
-        this.team.status.lastBumpAt = this.$store.state.timeManager.getTimestamp();
-
+      console.log("Bump before");
+      if (this.canAlreadyBump()) {
         // Queue a lap
-        this.$store.state.teamManager.queueLap(this.team.id);
-      }
-    },
-
-    setDelayMessage() {
-      // Only display a message when the timestamp is not yet expired.
-      if (this.onDelay()) {
-        // Calculate the delay in seconds.
-        let seconds = Math.ceil(
-          (this.team.status.unixTimeStampWhenBumpable -
-            this.$store.state.timeManager.getTimestamp()) /
-            1000
-        );
-
-        this.delay_message = `Gelieve ${seconds}s te wachten.`;
-      } else {
-        this.delay_message = "";
-      }
-    },
-
-    setWarningMessage() {
-      // Calculate the delay in seconds.
-      let seconds = Math.ceil(
-        (this.$store.state.timeManager.getTimestamp() -
-          this.team.status.lastBumpAt) /
-          1000
-      );
-
-      // Timestring to display.
-      let time =
-        seconds - 60 >= 0
-          ? `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-          : `${seconds}s`;
-
-      // Set the delay warning message.
-      this.delay_warning_message = `Last seen: ${time}`;
-
-      // If the seconds is bigger than a given value, set the text-color on red.
-      if (seconds >= Config.teams.delay_warning) {
-        this.delay_warning_red = true;
-      } else {
-        this.delay_warning_red = false;
+        console.log("Bump");
+        this.lastLocalBump = timeManager.now();
+        teamManager.queueLap(this.team.id);
       }
     }
   }
@@ -156,8 +114,20 @@ export default {
   margin-bottom: 10px;
 }
 
-.team__warning__red {
+.team__lastSeenAt {
+  font-style: italic;
+}
+
+.team__lastSeenError {
   color: red;
+}
+
+.team__lastTeamWarning {
+  color: orange;
+}
+
+.team__lastTeamOK {
+  color: green;
 }
 </style>
 

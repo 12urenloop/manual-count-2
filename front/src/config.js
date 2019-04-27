@@ -2,7 +2,7 @@ import Home from "./views/Home";
 import Teams from "./views/Teams";
 import Admin from "./views/Admin";
 
-export default {
+export const config = {
     routes: [
         {
             path: "/",
@@ -25,6 +25,7 @@ export default {
 
     backend: {
         url: "http://localhost:3000",
+        retries: 1,
         endpoints: {
             teams_overview: "/teams",
             teams_count: "/teams/{}/bump?timestamp={}",
@@ -36,6 +37,7 @@ export default {
     teams: {
         delay_bumpable: 15,
         delay_warning: 90,
+        delay_error: 120,
         delay_refresh: 1,
         delay_post_lap: 1,
     }
