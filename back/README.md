@@ -16,6 +16,10 @@ yarn run start
 ## Running in development
 
 ```bash
+# Configure teams in seed.ts
+yarn run db seed
+
+# Start dev server
 yarn run dev
 ```
 
