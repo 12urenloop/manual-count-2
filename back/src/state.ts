@@ -21,6 +21,7 @@ export class State {
   private config: StateConfig;
   private db: Sequelize;
   private delay: number;
+  private boxxyUpdate: boolean;
 
   constructor(options: StateOptions) {
     const { logger, config } = options;
@@ -44,6 +45,12 @@ export class State {
    * 
    * @param teamId the id of the team you want to bump the lap count for
    */
+  public async getBoxxyUpdate(): Promise<boolean> {
+    return this.boxxyUpdate
+  }
+  public async setBoxxyUpdate(flag: boolean): Promise<void> {
+    this.boxxyUpdate = flag;
+  }
   public async bumpLapCount(teamId: number, timestamp: number): Promise<Status> {
     let team = await Team.findByPrimary(teamId);
     if (!team) {
