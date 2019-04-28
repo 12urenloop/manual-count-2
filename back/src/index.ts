@@ -2,12 +2,12 @@ import express from "express";
 import winston from "winston";
 import cors from "cors";
 
-import { TransformableInfo } from "logform";
+import {TransformableInfo} from "logform";
 
-import { State, StateConfig, Status, TeamResult } from './state';
-import { config } from './config';
+import {State, StateConfig, Status, TeamResult} from './state';
+import {config} from './config';
 
-const { exec } = require('child_process');
+const {exec} = require('child_process');
 
 async function main() {
     const app = express();
@@ -19,7 +19,7 @@ async function main() {
     const logger = winston.createLogger({
         level: 'info',
         format: winston.format.combine(
-            winston.format.timestamp({ format: 'HH:mm:SS' }),
+            winston.format.timestamp({format: 'HH:mm:SS'}),
             winston.format.metadata(),
             winston.format.printf(lineFormat),
         ),
@@ -42,8 +42,8 @@ async function main() {
         ],
     });
 
-    const { minSecondsBetweenBumps, dbConfig } = config;
-    const stateConfig: StateConfig = { minSecondsBetweenBumps, dbConfig };
+    const {minSecondsBetweenBumps, dbConfig} = config;
+    const stateConfig: StateConfig = {minSecondsBetweenBumps, dbConfig};
     const state = new State({
         logger,
         config: stateConfig,
@@ -51,7 +51,7 @@ async function main() {
     await state.initialize();
 
     // Allow cross control origin.
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
@@ -85,7 +85,7 @@ async function main() {
     app.get('/teams', async (req, res, next) => {
         try {
             const teams: TeamResult[] = await state.getTeams();
-            res.send({ teams });
+            res.send({teams});
         } catch (err) {
             next(err);
         }
@@ -94,7 +94,7 @@ async function main() {
     app.get('/teams', async (req, res, next) => {
         try {
             const teams: TeamResult[] = await state.getTeams();
-            res.send({ teams });
+            res.send({teams});
         } catch (err) {
             next(err);
         }
@@ -137,7 +137,7 @@ async function main() {
                 // Now try to restart the current process
                 console.log("This is pid " + process.pid);
                 setTimeout(() => {
-                    process.on("exit", function() {
+                    process.on("exit", function () {
                         require("child_process").spawn(process.argv.shift(), process.argv, {
                             cwd: process.cwd(),
                             detached: true,
@@ -151,7 +151,38 @@ async function main() {
         } catch (err) {
             next(err);
         }
-    })
+    });
+    app.post('/boxxy-toggle', async (req, res, next) => {
+            try {
+                const boxxyUpdate = await state.getBoxxyUpdate();
+                if (!boxxyUpdate) {
+                    await state.setBoxxyUpdate(true);
+                    exec("src/boxxy_update/daemon.sh", (error: any, stdout: any, stderr: any) => {
+                        if (error) {
+                            console.error(`exec error: ${error}`);
+                            return;
+                        }
+                        console.log("Starting boxxyupdate")
+                    })
+                } else {
+                    await state.setBoxxyUpdate(false);
+                    exec("src/boxxy_update/kill.sh", (error: any, stdout: any, stderr: any) => {
+                        if (error) {
+                            console.error(`exec error: ${error}`);
+                            res.status(500);
+                            return;
+                        }
+                        console.log("Closed boxxyupdate")
+                        res.status(200);
+                        res.send("OK\n");
+                    });
+                }
+
+            } catch (err) {
+                next(err);
+            }
+        }
+    );
 
     // Let's spawn this baby
     app.listen(
@@ -159,7 +190,6 @@ async function main() {
         () => console.log(`Server running on http://localhost:${config.port}!`)
     );
 }
-
 
 
 main()
