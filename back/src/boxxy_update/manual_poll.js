@@ -1,14 +1,14 @@
 const request = require("request");
 const config = require("./config.json");
 
-request(`${config.locations.manualcount}/teams`, function (error, response, body) {
+request(`${config.locations.manualcount}/teams`, function(error, response, body) {
     if (error || response.statusCode !== 200) {
         console.log(error);
         if (response) {
-            console.log(response.statusCode)
-            console.log(response.statusMessage)
+            console.log(response.statusCode);
+            console.log(response.statusMessage);
         }
-        return
+        return;
     }
     const newState = {
         teams: {}
@@ -18,28 +18,27 @@ request(`${config.locations.manualcount}/teams`, function (error, response, body
 
 
     state.teams.forEach((team) => {
-            const offset = config.offsets[team.id];
-            newState.teams[team.id] = {
-                id: team.id,
-                name: team.name,
-                laps: offset + team.status.lapCount,
-                updated: team.status.lastBumpAt
-            }
-        }
-    );
+        const offset = config.offsets[team.id];
+        newState.teams[team.id] = {
+            id: team.id,
+            name: team.name,
+            laps: offset + team.status.lapCount,
+            updated: team.status.lastBumpAt
+        };
+    });
 
-    request.put(`${config.locations.boxxy}/teams`, {
-        json: true, body: newState,
-        auth: {
-            user: config.user,
-            pass: config.pass,
-            sendImmediately: false
-        }
-    })
+    request.put(`${config.locations.boxxy}/state`, {
+            json: true,
+            body: newState,
+            auth: {
+                user: config.user,
+                pass: config.pass,
+                sendImmediately: false
+            }
+        })
         .on("response", (response => {
             console.log(response.statusCode);
             console.log(response.statusMessage);
         }));
 
 });
-

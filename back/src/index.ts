@@ -173,11 +173,11 @@ async function main() {
                             return;
                         }
                         console.log("Closed boxxyupdate")
-                        res.status(200);
-                        res.send("OK\n");
                     });
                 }
-
+            const ding = await state.getBoxxyUpdate();
+            res.status(200);
+            res.send(ding);
             } catch (err) {
                 next(err);
             }

@@ -1,1 +1,1 @@
-kill $(ps -fade | grep boxxyUpdateLaunch.sh | grep -v grep | awk '{print $2}')
+kill $(ps -fad | grep manual_poll.js | grep -v grep | awk '{print $2}')
