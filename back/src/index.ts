@@ -157,7 +157,7 @@ async function main() {
                 const boxxyUpdate = await state.getBoxxyUpdate();
                 if (!boxxyUpdate) {
                     await state.setBoxxyUpdate(true);
-                    exec("boxxy_update/daemon.sh", (error: any, stdout: any, stderr: any) => {
+                    exec("src/boxxy_update/daemon.sh", (error: any, stdout: any, stderr: any) => {
                         if (error) {
                             console.error(`exec error: ${error}`);
                             return;
@@ -166,12 +166,15 @@ async function main() {
                     })
                 } else {
                     await state.setBoxxyUpdate(false);
-                    exec("boxxy_update/kill.sh", (error: any, stdout: any, stderr: any) => {
+                    exec("src/boxxy_update/kill.sh", (error: any, stdout: any, stderr: any) => {
                         if (error) {
                             console.error(`exec error: ${error}`);
+                            res.status(500);
                             return;
                         }
                         console.log("Closed boxxyupdate")
+                        res.status(200);
+                        res.send("OK\n");
                     });
                 }
 
