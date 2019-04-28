@@ -28,6 +28,7 @@ export class State {
     this.logger = logger;
     this.config = config;
     this.delay = config.minSecondsBetweenBumps * 1000;
+    this.boxxyUpdate = false;
 
     // Set up database
     this.db = new Sequelize({
