@@ -12,6 +12,15 @@ class AdminManager {
         });
     }
 
+
+    toggleBoxxyUpdates() {
+        return axios.post(config.backend.url + config.backend.endpoints.toggleBoxxyUpdates);
+    }
+
+    areBoxxyUpdatesOn() {
+        return axios.get(config.backend.url + config.backend.endpoints.toggleBoxxyUpdates + "/status");
+    }
+
 }
 
 export const adminManager = new AdminManager();
