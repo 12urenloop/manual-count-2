@@ -13,22 +13,22 @@ async function seed() {
   });
 
   const teams = [
-    'vtk',
-    'hilok',
-    'vlk',
-    'vek/ml',
-    'wetenschappen',
-    'sk',
-    'vgk',
-    'hk',
-    'politea',
-    'vrg',
-    'blandinia',
-    'vppk',
-    'wvk',
-    'hermes/veto/lila',
-    'lombriosiana/vbk',
-    'antilopen'
+    'VTK',
+    'HILOK',
+    'VLK',
+    'VEK & ML',
+    'Wetenschappen',
+    'SK',
+    'VGK',
+    'HK',
+    'Politea',
+    'VRG',
+    'Blandinia',
+    'VPPK',
+    'WVK',
+    'Hermes & Veto & LILA',
+    'Lombriosiana & VBK',
+    'Antilopen'
   ];
 
 
