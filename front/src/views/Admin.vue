@@ -14,6 +14,7 @@
                   <v-btn color="primary" raised v-on="on" @click.stop="addTeamDialog = true">Toevoegen</v-btn>
                   <v-btn color="error" raised v-on="on" @click.stop="addTeamDialog = false">Reset count</v-btn>
                   <v-btn color="info" raised @click.stop="toggleBoxxy">Toggle boxxy updates</v-btn>
+                  <span>Toggled: {{ isBoxxyToggled }}</span>
                 </v-flex>
               </v-layout>
             </v-card-title>
@@ -76,27 +77,37 @@ import TeamList from "../components/TeamList.vue";
 import { adminManager } from "../team/AdminManager";
 
 export default {
-  name: "Admin",
-  components: {
-    TeamList
-  },
-  data: () => ({
-      showDialog: false,
-      addTeamDialog: false,
-      teamName: ""
-  }),
-  methods: {
-    addTeam() {
-      // Validate the team on the client side.
-      if (this.$refs.formAddTeam.validate()) {
-        this.snackbar = true;
-      }
-    }, reset(){
-        adminManager.resetManualCount();
-    }, toggleBoxxy(){
-        adminManager.toggleBoxxyUpdates();
+    name: "Admin",
+    components: {
+        TeamList
+    },
+    data: () => ({
+        showDialog: false,
+        addTeamDialog: false,
+        teamName: "",
+        isBoxxyToggled: false
+    }),
+    methods: {
+        addTeam() {
+            // Validate the team on the client side.
+            if (this.$refs.formAddTeam.validate()) {
+                this.snackbar = true;
+            }
+        }, reset(){
+            adminManager.resetManualCount();
+        }, toggleBoxxy(){
+            let self = this;
+            adminManager.toggleBoxxyUpdates().then((response) => {
+              console.log("Boxxy toggle succes, new state: " + response.data);
+              self.isBoxxyToggled = response.data;
+              
+        });
     }
-  }
+    }, created(){
+        adminManager.areBoxxyUpdatesOn().then((response) => {
+            this.isBoxxyToggled = response.data;
+        });
+    }
 };
 </script>
 

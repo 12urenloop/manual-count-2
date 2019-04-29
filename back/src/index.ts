@@ -183,6 +183,15 @@ async function main() {
             }
         }
     );
+    app.get('/boxxy-toggle/status', async (req, res, next) => {
+        try {
+            const syncStatus = await state.getBoxxyUpdate();
+            res.status(200);
+            res.send(syncStatus);
+        } catch (err) {
+            next(err);
+        }
+    });
 
     // Let's spawn this baby
     app.listen(

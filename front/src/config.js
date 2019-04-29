@@ -24,14 +24,15 @@ export const config = {
     ],
 
     backend: {
-        url: "http://10.0.21.21:3000",
+        url: "http://localhost:3000",
         retries: 1,
         endpoints: {
             teams_overview: "/teams",
             teams_count: "/teams/{}/bump?timestamp={}",
             teams_add: "/teams/add/{}",
             time: "/time",
-            reset_counter: "/reset-db"
+            reset_counter: "/reset-db",
+            toggleBoxxyUpdates: "/boxxy-toggle"
         }
     },
 
