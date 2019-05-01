@@ -21,7 +21,7 @@ async function seed() {
     'SK',
     'VGK',
     'HK',
-    'Politea',
+    'Politeia',
     'VRG',
     'Blandinia',
     'VPPK',
