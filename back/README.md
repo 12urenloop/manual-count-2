@@ -23,6 +23,14 @@ yarn run db seed
 yarn run dev
 ```
 
+## Usage
+
+* Restarting manual count
+This will save a backup of the current database, seed a new one, and restart the server
+```sh
+curl -X POST "http://localhost:3000/reset-db"
+```
+
 ## Note
 
 This project makes use of [Sequelize](http://docs.sequelizejs.com/). Also check out:

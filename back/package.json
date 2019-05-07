@@ -37,10 +37,12 @@
     "typescript": "^3.4.1"
   },
   "dependencies": {
+    "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "mariadb": "^2.0.3",
     "reflect-metadata": "^0.1.13",
+    "request": "^2.88.0",
     "sequelize": "4.27",
     "sequelize-typescript": "^0.6.9",
     "sqlite3": "^4.0.6",

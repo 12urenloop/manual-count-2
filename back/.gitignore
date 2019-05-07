@@ -4,6 +4,7 @@ node_modules
 /logs/
 database.sqlite3
 
+log
 # local env files
 .env.local
 .env.*.local

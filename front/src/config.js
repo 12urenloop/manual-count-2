@@ -30,7 +30,9 @@ export const config = {
             teams_overview: "/teams",
             teams_count: "/teams/{}/bump?timestamp={}",
             teams_add: "/teams/add/{}",
-            time: "/time"
+            time: "/time",
+            reset_counter: "/reset-db",
+            toggleBoxxyUpdates: "/boxxy-toggle"
         }
     },
 
