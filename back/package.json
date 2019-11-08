@@ -43,7 +43,7 @@
     "mariadb": "^2.0.3",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.0",
-    "sequelize": "4.27",
+    "sequelize": "5.15",
     "sequelize-typescript": "^0.6.9",
     "sqlite3": "^4.0.6",
     "winston": "^3.2.1"
