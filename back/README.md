@@ -4,12 +4,9 @@
 
 ```bash
 # Configure teams in seed.ts
-yarn run db seed
+yarn run seed
 
-# Build the package
-yarn run build
-
-# Start server
+# Build and start the server
 yarn run start
 ```
 
@@ -17,7 +14,7 @@ yarn run start
 
 ```bash
 # Configure teams in seed.ts
-yarn run db seed
+yarn run seed
 
 # Start dev server
 yarn run dev
