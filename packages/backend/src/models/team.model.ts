@@ -32,14 +32,14 @@ export class Team extends BaseEntity {
    * Total number of laps for the team.
    * (Computed Value)
    */
-  lapsAmount: number;
+  lapsCount: number;
 
   /**
    * Calculate the laps amount.
    * This function is executed during each find() or similar functions.
    */
   @AfterLoad()
-  async calculateLapsAmount() {
-    this.lapsAmount = await Lap.count({ where: { team: this } });
+  async calculateLapsCount() {
+    this.lapsCount = await Lap.count({ where: { team: this } });
   }
 }
