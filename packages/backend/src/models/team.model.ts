@@ -35,11 +35,28 @@ export class Team extends BaseEntity {
   lapsCount: number;
 
   /**
+   * Timestamp of the last lap for the team.
+   * (Computed Value)
+   */
+  lapsLastTimestamp: number | undefined;
+
+  /**
    * Calculate the laps amount.
    * This function is executed during each find() or similar functions.
    */
   @AfterLoad()
   async calculateLapsCount() {
     this.lapsCount = await Lap.count({ where: { team: this } });
+  }
+
+  /**
+   * Calculate the last lap timestamp.
+   * This function is executed during each find() or similar functions.
+   */
+  @AfterLoad()
+  async calculateLapsLastTimestamp() {
+    const lastLap = await Lap.findOne({ where: { team: this }, order: { timestamp: "DESC" } });
+
+    this.lapsLastTimestamp = lastLap?.timestamp || 0;
   }
 }

@@ -1,6 +1,7 @@
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import fastifyCors from "fastify-cors";
+import fastifySwagger from "fastify-swagger";
 import config from "./config";
 import { createConnection } from "typeorm";
 import { Team } from "./models/team.model";
@@ -22,15 +23,24 @@ server.register(fastifyCors, {
   origin: true,
 });
 
+// Register szqgger plugin
+server.register(fastifySwagger, {
+  routePrefix: "/",
+  exposeRoute: true,
+  swagger: {
+    info: {
+      title: "Manual Count API",
+      description: "API for Manual Count",
+      version: "1.0.0",
+    },
+  },
+});
+
 // Database connection
 let connection = null;
 
 // Available controllers
-const controllers = [
-  require("./controllers/hello.controller"),
-  require("./controllers/time.controller"),
-  require("./controllers/teams.controller"),
-];
+const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller")];
 
 // Register each controller.
 controllers.map((controller) => {
@@ -56,7 +66,7 @@ async function start() {
 
   // Start the Fastify instance
   try {
-    await server.listen(config.PORT);
+    await server.listen(config.PORT, "0.0.0.0");
 
     server.log.info(`Server listening on ${config.PORT}`);
   } catch (err) {

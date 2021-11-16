@@ -7,11 +7,20 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.16"
+    "@vueuse/core": "^6.5.3",
+    "@vueuse/integrations": "^6.5.3",
+    "axios": "^0.23.0",
+    "bulma": "^0.9.3",
+    "date-fns": "^2.25.0",
+    "pinia": "^2.0.0-rc.13",
+    "vue": "^3.2.16",
+    "vue-router": "^4.0.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
+    "sass": "^1.42.1",
     "typescript": "^4.4.3",
+    "unplugin-vue-components": "^0.15.6",
     "vite": "^2.6.4",
     "vue-tsc": "^0.3.0"
   }
