@@ -113,10 +113,10 @@ export default (server: FastifyInstance) => {
     // at lease the LAP_MIN_DIFFERENCE value.
     const lastLap = await Lap.findOne({ where: { team }, order: { timestamp: "DESC" } });
     if (lastLap && body.timestamp - lastLap.timestamp < config.LAP_MIN_DIFFERENCE) {
-      return reply.code(200).send({
+      /*return reply.code(200).send({
         message: `Lap must be at least ${config.LAP_MIN_DIFFERENCE}ms apart from the last lap.`,
         code: 200,
-      });
+      });*/
     }
 
     // Create a new lap and append it to the team.
@@ -126,6 +126,9 @@ export default (server: FastifyInstance) => {
 
     // Attempt to save the lap
     await lap.save();
+
+    // Broadcast the lap to all connected clients.
+    server.io.emit("hello");
 
     return reply.code(200).send({
       message: "Lap has been successfully registered.",

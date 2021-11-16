@@ -1,0 +1,61 @@
+// Bulma variable overrides
+$primary: #ff7f00;
+$text: #172940;
+$link: $primary;
+$title-color: $text;
+
+$family-sans-serif: "Inter", sans-serif;
+
+$radius-small: 8px;
+$radius: 8px;
+
+$card-radius: 16px;
+$card-background-color: #fff;
+
+$modal-card-head-background-color: white;
+$modal-card-head-border-bottom: 2px solid whitesmoke;
+$modal-card-foot-border-top: 2px solid whitesmoke;
+
+// Include Bulma SCSS
+@import "bulma/bulma";
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: $white-bis;
+  height: 100%;
+  width: 100%;
+
+  * {
+    // Prevent blue highlights on elements on mobile
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection,
+  ::-moz-selection {
+    background: $primary;
+    color: $white;
+  }
+}
+
+.container {
+  width: 100%;
+
+  &--main {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+
+    @include until($desktop) {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
+}
+
+// TODO: this must be removed
+.card {
+  background-color: $card-background-color;
+}

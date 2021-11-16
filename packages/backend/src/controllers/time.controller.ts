@@ -7,7 +7,7 @@ export default (server: FastifyInstance) => {
    */
   server.get("/time", async (request, reply) => {
     return {
-      time: Date.now(),
+      timestamp: Date.now(),
     };
   });
 };
