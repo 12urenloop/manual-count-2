@@ -1,3 +1,4 @@
+import "dotenv/config";
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import fastifyCors from "fastify-cors";
@@ -11,8 +12,9 @@ import { Lap } from "./models/lap.model";
 const server = fastify({
   disableRequestLogging: true,
   logger: {
-    prettyPrint: true,
-  },
+    level: config.MODE === "production" ? "info" : "debug",
+    prettyPrint: true
+  }
 });
 
 // Register the socket.io plugin

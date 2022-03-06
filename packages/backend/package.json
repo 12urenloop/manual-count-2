@@ -6,6 +6,8 @@
     "dev": "nodemon --quiet src/main.ts"
   },
   "dependencies": {
+    "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
     "fastify": "^3.22.0",
     "fastify-cors": "^6.0.2",
     "fastify-socket.io": "^2.0.1",
