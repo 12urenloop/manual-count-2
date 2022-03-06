@@ -16,12 +16,6 @@ export class Team extends BaseEntity {
   name!: string;
 
   /**
-   * Chestnumber of the team.
-   */
-  @Column({ unique: true })
-  number!: number;
-
-  /**
    * List of counted laps for the team.
    * This does not include duplicate counts!
    */

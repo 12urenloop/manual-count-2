@@ -7,6 +7,7 @@ import config from "./config";
 import { createConnection } from "typeorm";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
+import { setupTeams } from "./services/team.service";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -22,7 +23,7 @@ server.register(fastifyIO);
 
 // Register the cors plugin
 server.register(fastifyCors, {
-  origin: true,
+  origin: true
 });
 
 // Register szqgger plugin
@@ -33,9 +34,9 @@ server.register(fastifySwagger, {
     info: {
       title: "Manual Count API",
       description: "API for Manual Count",
-      version: "1.0.0",
-    },
-  },
+      version: "1.0.0"
+    }
+  }
 });
 
 // Database connection
@@ -45,7 +46,7 @@ let connection = null;
 const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller")];
 
 // Register each controller.
-controllers.map((controller) => {
+controllers.forEach((controller) => {
   controller.default(server);
 });
 
@@ -57,10 +58,15 @@ async function start() {
       type: "sqlite",
       database: "./database.sqlite",
       synchronize: true,
-      entities: [Team, Lap],
+      entities: [Team, Lap]
     });
 
     server.log.info("Database connection started");
+
+    // Start pulling teams from telraam
+    setupTeams(server.log);
+
+    //
   } catch (err) {
     server.log.error(err);
     process.exit(1);
@@ -70,7 +76,6 @@ async function start() {
   try {
     await server.listen(config.PORT, "0.0.0.0");
 
-    server.log.info(`Server listening on ${config.PORT}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

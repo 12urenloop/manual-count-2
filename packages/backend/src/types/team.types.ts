@@ -1,3 +1,4 @@
+// region API
 export interface TeamsRoute {}
 
 export interface TeamsCreateRoute {
@@ -22,3 +23,10 @@ export interface TeamsLapsRoute {
     teamId: number;
   };
 }
+// endregion
+// region Schema
+export interface TelraamTeam {
+  id: number;
+  name: string;
+}
+// endregion

@@ -3,62 +3,14 @@ import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
 import { TeamsCreateRoute, TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
+import { queueLapToTelraam } from "../services/laps.service";
 
 export default (server: FastifyInstance) => {
   /**
    * Get list with all available teams.
    */
   server.get<TeamsRoute>("/teams", async (request, reply) => {
-    return await Team.find();
-  });
-
-  /**
-   * Create a new team.
-   */
-  server.post<TeamsCreateRoute>("/teams", async (request, reply) => {
-    const body = request.body || {};
-
-    // Make sure the team name is present
-    if (!body.name) {
-      return reply.code(400).send({
-        error: "Team name is required",
-        code: 400,
-      });
-    }
-
-    // Make sure the team number is present
-    if (!body.number) {
-      return reply.code(400).send({
-        error: "Team number is required",
-        code: 400,
-      });
-    }
-
-    // Make sure the team name is unique
-    if (await Team.findOne({ name: body.name })) {
-      return reply.code(400).send({
-        error: "Team name is already taken.",
-        code: 400,
-      });
-    }
-
-    // Make sure the team number is unique
-    if (await Team.findOne({ number: body.number })) {
-      return reply.code(400).send({
-        error: "Team number is already taken.",
-        code: 400,
-      });
-    }
-
-    // Create the new team
-    const team = new Team();
-    team.name = body.name;
-    team.number = body.number;
-
-    // Attempt to save the team.
-    await team.save();
-
-    return team;
+    return Team.find();
   });
 
   /**
@@ -113,10 +65,10 @@ export default (server: FastifyInstance) => {
     // at lease the LAP_MIN_DIFFERENCE value.
     const lastLap = await Lap.findOne({ where: { team }, order: { timestamp: "DESC" } });
     if (lastLap && body.timestamp - lastLap.timestamp < config.LAP_MIN_DIFFERENCE) {
-      /*return reply.code(200).send({
+      return reply.code(409).send({
         message: `Lap must be at least ${config.LAP_MIN_DIFFERENCE}ms apart from the last lap.`,
-        code: 200,
-      });*/
+        code: 409,
+      });
     }
 
     // Create a new lap and append it to the team.
@@ -126,6 +78,8 @@ export default (server: FastifyInstance) => {
 
     // Attempt to save the lap
     await lap.save();
+
+    queueLapToTelraam(lap);
 
     // Broadcast the lap to all connected clients.
     server.io.emit("hello");
