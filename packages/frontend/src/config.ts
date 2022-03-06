@@ -11,7 +11,7 @@ export default {
 
   // Teams configuration
   teams: {
-    // Delay (in milliseconds) since last lap to show the lap updae warning
+    // Delay (in milliseconds) since last lap to show the lap update warning
     delayWarning: 120 * 1000,
   },
 };

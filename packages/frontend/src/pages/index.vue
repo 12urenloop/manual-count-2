@@ -8,6 +8,7 @@
 
 <script lang="ts" setup>
 import { useTeamsStore } from "../stores/teams.store";
+import TeamCard from "@/src/components/teams/TeamCard.vue";
 
 const teamsStore = useTeamsStore();
 </script>
