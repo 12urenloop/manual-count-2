@@ -1,7 +1,7 @@
 export interface Team {
   id: number;
   name: string;
-  number: number;
+  disabled: boolean;
   lapsCount: number;
   lapsLastTimestamp: number;
 }

@@ -1,8 +1,11 @@
 <template>
-  <div class="team-card card card-content" @click="teamStore.addLap(team.id)">
+  <div
+    :class="`team-card card card-content ${team.disabled ? 'disabled' : '' }`"
+    @click="teamStore.addLap(team.id)"
+     v-wave>
     <!-- Team number -->
     <div class="team-card-number">
-      {{ team.number }}
+      {{ team.id }}
     </div>
 
     <!-- Team name -->
@@ -32,8 +35,8 @@ const props = defineProps({
   // Team to display
   team: {
     type: Object as PropType<Team>,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const timeStore = useTimeStore();
@@ -54,11 +57,6 @@ const timeSinceLastLap = computed(() => {
   return intervalFormatted;
 });
 
-// Color values of the team card.
-const color = computed(() => ({
-  background: "white",
-  text: "inherit",
-}));
 </script>
 
 <style lang="scss" scoped>
@@ -68,8 +66,15 @@ const color = computed(() => ({
   align-items: center;
   text-align: center;
   overflow-wrap: anywhere;
-  background-color: v-bind("color.background");
-  color: v-bind("color.text");
+  background-color: white;
+  color: inherit;
+  cursor: pointer;
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #ababab;
+  }
 
   &-number {
     font-size: 3rem;

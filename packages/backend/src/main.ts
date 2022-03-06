@@ -9,7 +9,7 @@ import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 
 // Create a Fastify instance
-const server = fastify({
+export const server = fastify({
   disableRequestLogging: true,
   logger: {
     level: config.MODE === "production" ? "info" : "debug",
