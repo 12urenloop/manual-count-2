@@ -8,9 +8,10 @@ import { createConnection } from "typeorm";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { setupTeams } from "./services/team.service";
+import { initLapQueue } from "./services/laps.service";
 
 // Create a Fastify instance
-export const server = fastify({
+const server = fastify({
   disableRequestLogging: true,
   logger: {
     level: config.MODE === "production" ? "info" : "debug",
@@ -66,7 +67,8 @@ async function start() {
     // Start pulling teams from telraam
     setupTeams(server.log);
 
-    //
+    // Setup Queue for laps push to telraam
+    initLapQueue(server.log)
   } catch (err) {
     server.log.error(err);
     process.exit(1);

@@ -4,9 +4,11 @@ import { defineStore } from "pinia";
 import { Team } from "../types/models/team.model";
 import { useTimeStore } from "./time.store";
 import config from "../config";
+import { useQueueStore } from "@/src/stores/queue.store";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
+  const queueStore = useQueueStore();
 
   // Fetch the teams
   const teamsQuery = useAxios<Team[]>("/teams", config.axios);
@@ -22,16 +24,20 @@ export const useTeamsStore = defineStore("teams", () => {
         `/teams/${id}/laps`,
         {
           timestamp: timeStore.clientTime
-        },
-        {
-          method: "POST"
         }
       );
       if (response.status === 200) {
+        queueStore.flushQueue();
         teams.value[teamIdx].lapsCount++;
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
+      if(e?.request?.status !== 409) {
+        queueStore.addToQueue({
+          teamId: id,
+          timestamp: timeStore.clientTime
+        })
+      }
     } finally {
       teams.value[teamIdx].lapsLastTimestamp = timeStore.clientTime;
       teams.value[teamIdx].disabled = true;

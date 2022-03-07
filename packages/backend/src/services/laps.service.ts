@@ -1,6 +1,5 @@
 import { Lap } from "../models/lap.model";
 import { FastifyLoggerInstance } from "fastify/types/logger";
-import { server } from "../main";
 import { axiosInstance } from "./axios.service";
 
 /**
@@ -9,7 +8,7 @@ import { axiosInstance } from "./axios.service";
  */
 let queue: Lap[] = [];
 let lockQueue: boolean = false;
-let logger: FastifyLoggerInstance = server?.log;
+let logger: FastifyLoggerInstance;
 
 const pushToTelraam = async (lap: Lap): Promise<boolean> => {
   try {
@@ -76,3 +75,7 @@ export const queueLapToTelraam = async (lap: Lap) => {
     queue.push(lap);
   }
 };
+
+export const initLapQueue = (srvLogger: FastifyLoggerInstance) => {
+  logger = srvLogger;
+}
