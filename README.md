@@ -28,6 +28,19 @@ Install the dependencies:
 
 `yarn install` or `npm install`
 
+### Build
+
+The frontend is served via fastify-static.
+
+**If you already built the files for production you can skip this step.**
+
+To build the files for production run:
+`yarn build` or `npm run build` in the root directory
+
+After building the files you can just run `yarn start` or `npm run start` to start the backend with the previously built frontend.
+
+## Development
+
 To serve both the front and backend you can use the following commands:
 
 `yarn dev` or ` npm run dev`

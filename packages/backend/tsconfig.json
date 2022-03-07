@@ -9,7 +9,8 @@
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "lib": ["esnext"]
+    "lib": ["esnext"],
+    "outDir": "./dist",
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

@@ -3,8 +3,11 @@ import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import fastifyCors from "fastify-cors";
 import fastifySwagger from "fastify-swagger";
+import fastifyStatic from 'fastify-static';
 import config from "./config";
+import path from "path";
 import { createConnection } from "typeorm";
+import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { setupTeams } from "./services/team.service";
@@ -33,7 +36,7 @@ server.register(fastifyCors, {
 
 // Register szqgger plugin
 server.register(fastifySwagger, {
-  routePrefix: "/",
+  routePrefix: "/swagger",
   exposeRoute: true,
   swagger: {
     info: {
@@ -42,6 +45,16 @@ server.register(fastifySwagger, {
       version: "1.0.0"
     }
   }
+});
+
+server.register(fastifyStatic, {
+  root: path.resolve(__dirname, '../public'),
+  prefix: '/',
+});
+
+server.get('/', async (request, reply) => {
+  console.log(statSync(path.resolve(__dirname, '../public/index.html')).isFile());
+  reply.sendFile('index.html');
 });
 
 // Open connection for socket-io clients

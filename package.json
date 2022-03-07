@@ -1,13 +1,14 @@
 {
   "name": "@12urenloop/manual-count-2",
+  "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "lerna run dev --stream --parallel",
+    "build": "cd packages/frontend && yarn run build && cd ../.. && yarn run start",
+    "start": "cd packages/backend && yarn start",
     "postinstall": "lerna bootstrap"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
-  },
-  "dependencies": {
-    "fastify-swagger": "^4.12.6"
   }
 }

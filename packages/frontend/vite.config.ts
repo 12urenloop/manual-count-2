@@ -12,6 +12,10 @@ export default defineConfig({
     // Auto import components
     components()
   ],
+  build: {
+    outDir: '../backend/public',
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname),
