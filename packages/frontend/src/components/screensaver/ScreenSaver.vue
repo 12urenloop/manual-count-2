@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-const shown = ref(true);
+const shown = ref(import.meta.env.PROD);
 const hideScreenSaver = () => {
   shown.value = false;
 };
