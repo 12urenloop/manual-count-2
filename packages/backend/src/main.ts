@@ -20,7 +20,11 @@ const server = fastify({
 });
 
 // Register the socket.io plugin
-server.register(fastifyIO);
+server.register(fastifyIO, {
+  cors: {
+    origin: true
+  }
+});
 
 // Register the cors plugin
 server.register(fastifyCors, {
@@ -38,6 +42,15 @@ server.register(fastifySwagger, {
       version: "1.0.0"
     }
   }
+});
+
+// Open connection for socket-io clients
+server.ready(err => {
+  if (err) throw err;
+
+  server.io.on("connection", socket => {
+    server.log.debug(`Socket connected: ${socket.id}`);
+  });
 });
 
 // Database connection

@@ -82,7 +82,10 @@ export default (server: FastifyInstance) => {
     queueLapToTelraam(lap);
 
     // Broadcast the lap to all connected clients.
-    server.io.emit("hello");
+    server.io.emit("updateTeam", {
+      teamId: team.id,
+      laps: team.laps,
+    });
 
     return reply.code(200).send({
       message: "Lap has been successfully registered.",

@@ -28,7 +28,6 @@ export const useTeamsStore = defineStore("teams", () => {
       );
       if (response.status === 200) {
         queueStore.flushQueue();
-        teams.value[teamIdx].lapsCount++;
       }
     } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
@@ -38,18 +37,23 @@ export const useTeamsStore = defineStore("teams", () => {
           timestamp: timeStore.clientTime
         })
       }
-    } finally {
-      teams.value[teamIdx].lapsLastTimestamp = timeStore.clientTime;
-      teams.value[teamIdx].disabled = true;
-      setInterval(() => {
-        teams.value[teamIdx].disabled = false;
-      }, 15000);
     }
+  }
+
+  function addLapFromWS(id: number) {
+    const teamIdx = teams.value.findIndex(t => t.id == id);
+    teams.value[teamIdx].lapsCount++;
+    teams.value[teamIdx].lapsLastTimestamp = timeStore.clientTime;
+    teams.value[teamIdx].disabled = true;
+    setInterval(() => {
+      teams.value[teamIdx].disabled = false;
+    }, 15000);
   }
 
   return {
     teamsQuery,
     teams,
-    addLap
+    addLap,
+    addLapFromWS
   };
 });
