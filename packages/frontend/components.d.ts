@@ -5,6 +5,8 @@
 declare module 'vue' {
   export interface GlobalComponents {
     ScreenSaver: typeof import('./src/components/screensaver/ScreenSaver.vue')['default']
+    ServerStatus: typeof import('./src/components/status/serverStatus.vue')['default']
+    StatusIcon: typeof import('./src/components/status/serverStatus.vue')['default']
     TeamCard: typeof import('./src/components/teams/TeamCard.vue')['default']
   }
 }
