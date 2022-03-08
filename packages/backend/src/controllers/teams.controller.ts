@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
-import { TeamsCreateRoute, TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
+import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
-import { queueLapToTelraam } from "../services/laps.service";
+import { LapService } from "../services/laps.service";
 
 export default (server: FastifyInstance) => {
   /**
@@ -79,7 +79,7 @@ export default (server: FastifyInstance) => {
     // Attempt to save the lap
     await lap.save();
 
-    queueLapToTelraam(lap);
+    LapService.instance.queueLap(lap);
 
     // Broadcast the lap to all connected clients.
     server.io.emit("updateTeam", {

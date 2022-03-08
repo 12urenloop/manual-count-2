@@ -15,12 +15,13 @@ The backend should work without being connected to Telraam and the frontend shou
 The backend has a .env file that contains the following environment variables:
 The defaults for each variable can be found under `src/config.ts`
 
-| Variable         | Description                                            |
-|------------------|--------------------------------------------------------|
-| MODE             | Is used to define log type (production or development) |
-| TELRAAM_ENDPOINT | The endpoint of the Telraam API                        |
-| PORT             | Port where the backend is served at                    |
-| LAP_MIN_INTERVAL | Min lap difference in milliseconds between 2 laps      |
+| Variable            | Description                                            |
+|---------------------|--------------------------------------------------------|
+| MODE                | Is used to define log type (production or development) |
+| TELRAAM_ENDPOINT    | The endpoint of the Telraam API                        |
+| PORT                | Port where the backend is served at                    |
+| LAP_MIN_INTERVAL    | Min lap difference in milliseconds between 2 laps      |
+| TEAM_FETCH_INTERVAL | Time between fetches for laps in telraam, in ms.       |
 
 ### Installation
 

@@ -16,5 +16,9 @@ export interface Config {
    * @default 'localhost:8080'
    */
   TELRAAM_ENDPOINT: string;
+  /**
+   * Time between fetch for teams in telraam in ms.
+   */
+  TEAM_FETCH_INTERVAL: number;
   MODE: ConfigMode;
 }

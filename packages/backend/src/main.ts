@@ -10,8 +10,9 @@ import { createConnection } from "typeorm";
 import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
-import { setupTeams } from "./services/team.service";
-import { initLapQueue } from "./services/laps.service";
+import { LapService } from "./services/laps.service";
+import { AxiosService } from "./services/axios.service";
+import { TeamService } from "./services/team.service";
 
 // Create a Fastify instance
 const server = fastify({
@@ -69,6 +70,11 @@ server.ready(err => {
 // Database connection
 let connection = null;
 
+// Register Services
+new AxiosService(server);
+new LapService(server);
+new TeamService(server.log);
+
 // Available controllers
 const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller")];
 
@@ -90,11 +96,6 @@ async function start() {
 
     server.log.info("Database connection started");
 
-    // Start pulling teams from telraam
-    setupTeams(server.log);
-
-    // Setup Queue for laps push to telraam
-    initLapQueue(server.log)
   } catch (err) {
     server.log.error(err);
     process.exit(1);
