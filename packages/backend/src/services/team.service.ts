@@ -1,22 +1,18 @@
 import config from "../config";
-import { FastifyLoggerInstance } from "fastify/types/logger";
 import { TelraamTeam } from "../types/team.types";
 import { Team } from "../models/team.model";
-import { LapService } from "./laps.service";
-import { AxiosService } from "./axios.service";
+import lapsService from "./laps.service";
+import axiosService from "./axios.service";
+import { server } from "../main";
 
 export class TeamService {
-  private static instance: TeamService;
-  private logger: FastifyLoggerInstance;
   private teamCache: TelraamTeam[];
 
   // printValue
   private newTeams = 0;
   private updatedTeams = 0;
 
-  constructor(logger: FastifyLoggerInstance) {
-    this.logger = logger;
-    TeamService.instance = this;
+  constructor() {
     this.fetch();
     setInterval(this.fetch, config.TEAM_FETCH_INTERVAL);
   }
@@ -32,13 +28,13 @@ export class TeamService {
     // fetch data of stored @ old id
     const teamAtOldId = await Team.findOne({ id: oldId });
     if (!teamAtOldId) {
-      this.logger.warn(`Could not find team with id ${oldId} (name: ${teamName})`);
+      server.log.warn(`Could not find team with id ${oldId} (name: ${teamName})`);
       return true;
     }
     const newInfo = this.teamCache.find((team) => team.name === teamName);
     if (!newInfo) {
       // TODO: move old team to a seperate table (deleted teams) so we can keep track of them if the team is readded
-      this.logger.warn(`Could not find new id for team with name ${teamName}, Probably deleted`);
+      server.log.warn(`Could not find new id for team with name ${teamName}, Probably deleted`);
       return true;
     }
     const teamAtNewId = await Team.findOne({ id: newInfo.id });
@@ -78,7 +74,7 @@ export class TeamService {
     const existingTeam = await Team.findOne({ id: team.id });
     if (existingTeam) {
       if (existingTeam.name === team.name) {
-        this.logger.debug(`Team ${team.name} already exists`);
+        server.log.debug(`Team ${team.name} already exists`);
         // Do nothing
         return false;
       }
@@ -91,7 +87,7 @@ export class TeamService {
       // Search team where all our info is stored
       const teamInfo = await Team.findOne({ name: team.name });
       if (!teamInfo) {
-        this.logger.warn(`Could not find team with name ${team.name}`);
+        server.log.warn(`Could not find team with name ${team.name}`);
         return true;
       }
       // Update the id
@@ -110,7 +106,7 @@ export class TeamService {
         const needToCreate = await this.clearIdForTeam(team);
         if (needToCreate) {
           this.newTeams++;
-          this.logger.info(`Registering team ${team.name}`);
+          server.log.info(`Registering team ${team.name}`);
           // Create the new team
           const DbTeam = new Team();
           DbTeam.id = team.id;
@@ -120,33 +116,35 @@ export class TeamService {
           await DbTeam.save();
         }
       }
-      this.logger.info(`Registered ${this.newTeams} new teams and updated ${this.updatedTeams} teams`);
+      server.log.info(`Registered ${this.newTeams} new teams and updated ${this.updatedTeams} teams`);
     } catch (error) {
-      this.logger.error(error);
+      server.log.error(error);
     }
   }
 
   public async fetch() {
-    this.logger.info(`Fetching teams from telraam at ${config.TELRAAM_ENDPOINT}`);
+    server.log.info(`Fetching teams from telraam at ${config.TELRAAM_ENDPOINT}`);
     try {
-      const response = await AxiosService.instance.request<TelraamTeam[]>("get", `/team`, {
+      const response = await axiosService.request<TelraamTeam[]>("get", `/team`, {
         timeout: 5000,
         responseType: "json"
 
       });
       if (response.status !== 200) {
-        this.logger.error(`Failed to fetch teams from Telraam: ${response.status} ${response.statusText}`);
+        server.log.error(`Failed to fetch teams from Telraam: ${response.status} ${response.statusText}`);
         return;
       }
       this.teamCache = response.data;
       await this.register();
       // We add a flush for our lap queue here because it's potentially faster than waiting for a push of another lap
-      LapService.instance.flush();
+      lapsService.flush();
 
     } catch (error: any) {
-      throw error;
+      return;
     }
   }
 }
 
+const teamService = new TeamService();
 
+export default teamService

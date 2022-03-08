@@ -3,7 +3,7 @@ import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
-import { LapService } from "../services/laps.service";
+import lapsService from "../services/laps.service";
 
 export default (server: FastifyInstance) => {
   /**
@@ -79,7 +79,7 @@ export default (server: FastifyInstance) => {
     // Attempt to save the lap
     await lap.save();
 
-    LapService.instance.queueLap(lap);
+    lapsService.queueLap(lap);
 
     // Broadcast the lap to all connected clients.
     server.io.emit("updateTeam", {

@@ -10,12 +10,9 @@ import { createConnection } from "typeorm";
 import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
-import { LapService } from "./services/laps.service";
-import { AxiosService } from "./services/axios.service";
-import { TeamService } from "./services/team.service";
 
 // Create a Fastify instance
-const server = fastify({
+export const server = fastify({
   disableRequestLogging: true,
   logger: {
     level: config.MODE === "production" ? "info" : "debug",
@@ -69,11 +66,6 @@ server.ready(err => {
 
 // Database connection
 let connection = null;
-
-// Register Services
-new AxiosService(server);
-new LapService(server);
-new TeamService(server.log);
 
 // Available controllers
 const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller")];
