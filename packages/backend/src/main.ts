@@ -10,6 +10,7 @@ import { createConnection } from "typeorm";
 import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
+import { Socket } from "socket.io";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -59,7 +60,7 @@ server.get('/', async (request, reply) => {
 server.ready(err => {
   if (err) throw err;
 
-  server.io.on("connection", socket => {
+  server.io.on("connection", (socket:Socket) => {
     server.log.debug(`Socket connected: ${socket.id}`);
   });
 });

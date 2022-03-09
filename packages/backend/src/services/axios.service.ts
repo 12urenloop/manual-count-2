@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from "axios";
+import { Socket } from "socket.io";
 import config from "../config";
 import { server } from "../main";
 
@@ -18,7 +19,7 @@ export class AxiosService {
 
     // Register status event
     server.ready(err => {
-      server.io.on("connection", socket => {
+      server.io.on("connection", (socket: Socket) => {
         socket.on("telraamStatus", () => {
           socket.emit("telraamStatus", this.telraamStatus);
         });
