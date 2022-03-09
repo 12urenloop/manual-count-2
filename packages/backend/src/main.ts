@@ -1,13 +1,11 @@
-import "dotenv/config";
+require("dotenv");
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import fastifyCors from "fastify-cors";
 import fastifySwagger from "fastify-swagger";
 import fastifyStatic from "fastify-static";
-import config from "./config";
 import path from "path";
 import { createConnection } from "typeorm";
-import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { Socket } from "socket.io";
@@ -17,7 +15,7 @@ import { TeamService } from "./services/team.service";
 export const server = fastify({
   disableRequestLogging: true,
   logger: {
-    level: config.MODE === "production" ? "info" : "debug",
+    level: process.env.MODE === "production" ? "info" : "debug",
     prettyPrint: true,
   },
 });
@@ -53,7 +51,6 @@ server.register(fastifyStatic, {
 });
 
 server.get("/", async (request, reply) => {
-  console.log(statSync(path.resolve(__dirname, "../public/index.html")).isFile());
   reply.sendFile("index.html");
 });
 
@@ -104,7 +101,7 @@ async function start() {
 
   // Start the Fastify instance
   try {
-    await server.listen(config.PORT, "0.0.0.0");
+    await server.listen(process.env?.PORT ?? 3000, "0.0.0.0");
   } catch (err) {
     server.log.error(err);
     process.exit(1);
