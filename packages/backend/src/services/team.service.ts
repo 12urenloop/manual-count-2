@@ -42,39 +42,49 @@ export class TeamService {
     // fetch data of stored @ old id
     const teamAtOldId = await Team.findOne({ id: oldId });
     if (!teamAtOldId) {
-      server.log.warn(`Could not find team with id ${oldId} (name: ${teamName})`);
+      server.log.warn(`moveTeamAtId: Could not find team with id ${oldId} (name: ${teamName})`);
       return true;
     }
     const newInfo = this.teamCache.find(team => team.name === teamName);
     if (!newInfo) {
       // TODO: move old team to a seperate table (deleted teams) so we can keep track of them if the team is readded
-      server.log.warn(`Could not find new id for team with name ${teamName}, Probably deleted`);
+      server.log.warn(`moveTeamAtId: Could not find new id for team with name ${teamName}, Probably deleted`);
       return true;
     }
     const teamAtNewId = await Team.findOne({ id: newInfo.id });
     if (!teamAtNewId) {
       // No team at new id, Delete from database to make space for new team
-      await Team.delete({ id: oldId });
-      return true;
-    }
-    if (teamAtNewId.name === this.teamCache.find(team => team.id === oldId)?.name) {
-      // This is just a switch of id's
-      // Remove teams because saved in vars and prevent errors with primary keys
-      await Team.delete({ id: newInfo.id });
-      await Team.delete({ id: oldId });
-      // Update ids
-      teamAtOldId.id = newInfo.id;
-      teamAtNewId.id = oldId;
-      // Save
-      await teamAtOldId.save();
-      await teamAtNewId.save();
+      server.log.warn(`moveTeamAtId: Could not find team with id ${newInfo.id} (name: ${teamName} | oldId: ${oldId})`);
+      Team.update({ id: oldId }, { id: newInfo.id });
       return false;
     }
-    // 3rd diff team so recursion it is
+    const teamWithHighestId = await Team.findOne({
+      order: {
+        id: "DESC",
+      },
+    });
+    const tempId = (teamWithHighestId?.id ?? 0) + 1;
+
+    if (teamAtNewId.name === this.teamCache.find(team => team.id === oldId)?.name) {
+      // This is just a switch of id's
+      // New --> Temp
+      await Team.update({ id: newInfo.id }, { id: tempId });
+      // Old --> New
+      await Team.update({ id: oldId }, { id: newInfo.id });
+      // Temp --> Old
+      await Team.update({ id: tempId }, { id: oldId });
+      return false;
+    }
+    // 3rd diff team found
+    // Move info at teamAtOldId to a high id
+    Team.update({ id: oldId }, { id: tempId });
+    // Move team at new id
+    server.log.debug(`moveTeamAtId: Moving team with id ${newInfo.id} (name: ${teamName}) to id ${tempId}`);
     await this.clearIdForTeam(newInfo);
-    await Team.delete({ id: newInfo.id });
-    teamAtOldId.id = newInfo.id;
-    await teamAtOldId.save();
+    // // clear team at old id
+    // await Team.delete({ id: newInfo.id });
+    // Assign real new id
+    Team.update({ id: tempId }, { id: newInfo.id });
     return true;
   }
 
@@ -88,7 +98,7 @@ export class TeamService {
     const existingTeam = await Team.findOne({ id: team.id });
     if (existingTeam) {
       if (existingTeam.name === team.name) {
-        server.log.debug(`Team ${team.name} already exists`);
+        server.log.debug(`clearIdForTeam: Team ${team.name} already exists`);
         // Do nothing
         return false;
       }
@@ -96,16 +106,18 @@ export class TeamService {
       // Move stored team to his new id
       const needsUpdate = await this.moveTeamsAtId(team.id, existingTeam.name);
       this.updatedTeams++;
+      server.log.debug(`clearIdForTeam: Team ${team.name} ${needsUpdate ? "needs" : "does not need"} to be updated`);
       if (!needsUpdate) return false;
       // We need to update the team with the new id
       // Search team where all our info is stored
       const teamInfo = await Team.findOne({ name: team.name });
       if (!teamInfo) {
-        server.log.warn(`Could not find team with name ${team.name}`);
+        server.log.warn(`clearIdForTeam: Could not find team with name ${team.name}`);
         return true;
       }
+      server.log.debug(`clearIdForTeam: Updating team ${team.name} with id ${team.id} (new id: ${teamInfo.id})`);
       // Update the id
-      teamInfo.id = team.id;
+      Team.update({ id: teamInfo.id }, { id: team.id });
       await teamInfo.save();
       return false;
     }
