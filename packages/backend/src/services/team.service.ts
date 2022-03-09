@@ -31,7 +31,7 @@ export class TeamService {
       server.log.warn(`Could not find team with id ${oldId} (name: ${teamName})`);
       return true;
     }
-    const newInfo = this.teamCache.find((team) => team.name === teamName);
+    const newInfo = this.teamCache.find(team => team.name === teamName);
     if (!newInfo) {
       // TODO: move old team to a seperate table (deleted teams) so we can keep track of them if the team is readded
       server.log.warn(`Could not find new id for team with name ${teamName}, Probably deleted`);
@@ -43,7 +43,7 @@ export class TeamService {
       await Team.delete({ id: oldId });
       return true;
     }
-    if (teamAtNewId.name === this.teamCache.find((team) => team.id === oldId)?.name) {
+    if (teamAtNewId.name === this.teamCache.find(team => team.id === oldId)?.name) {
       // This is just a switch of id's
       // Remove teams because saved in vars and prevent errors with primary keys
       await Team.delete({ id: newInfo.id });
@@ -62,7 +62,7 @@ export class TeamService {
     teamAtOldId.id = newInfo.id;
     await teamAtOldId.save();
     return true;
-  };
+  }
 
   /**
    * Checks if the team's id is updated, if so it moves the other teams around to make sure we can update this team
@@ -127,8 +127,7 @@ export class TeamService {
     try {
       const response = await axiosService.request<TelraamTeam[]>("get", `/team`, {
         timeout: 5000,
-        responseType: "json"
-
+        responseType: "json",
       });
       if (response.status !== 200) {
         server.log.error(`Failed to fetch teams from Telraam: ${response.status} ${response.statusText}`);
@@ -138,7 +137,6 @@ export class TeamService {
       await this.register();
       // We add a flush for our lap queue here because it's potentially faster than waiting for a push of another lap
       lapsService.flush();
-
     } catch (error: any) {
       return;
     }
@@ -147,4 +145,4 @@ export class TeamService {
 
 const teamService = new TeamService();
 
-export default teamService
+export default teamService;

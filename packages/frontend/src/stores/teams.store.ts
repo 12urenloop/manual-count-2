@@ -20,22 +20,19 @@ export const useTeamsStore = defineStore("teams", () => {
   async function addLap(id: number) {
     const teamIdx = teams.value.findIndex(t => t.id == id);
     try {
-      const response = await config.axios.post<BasePostResponse>(
-        `/teams/${id}/laps`,
-        {
-          timestamp: timeStore.clientTime
-        }
-      );
+      const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
+        timestamp: timeStore.clientTime,
+      });
       if (response.status === 200) {
         queueStore.flushQueue();
       }
     } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
-      if(e?.request?.status !== 409) {
+      if (e?.request?.status !== 409) {
         queueStore.addToQueue({
           teamId: id,
-          timestamp: timeStore.clientTime
-        })
+          timestamp: timeStore.clientTime,
+        });
       }
     }
   }
@@ -54,6 +51,6 @@ export const useTeamsStore = defineStore("teams", () => {
     teamsQuery,
     teams,
     addLap,
-    addLapFromWS
+    addLapFromWS,
   };
 });

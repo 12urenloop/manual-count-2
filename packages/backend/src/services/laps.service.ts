@@ -16,12 +16,10 @@ export class LapService {
       const response = await axiosService.request("post", "/lap", {
         teamId: lap.team.id,
         lapSourceId: 2,
-        timestamp: lap.timestamp
+        timestamp: lap.timestamp,
       });
       if (response.status !== 200) {
-        server.log.error(
-          `Lap ${lap.id} could not be pushed to telraam, status: ${response.status}`
-        );
+        server.log.error(`Lap ${lap.id} could not be pushed to telraam, status: ${response.status}`);
         return false;
       }
       return true;

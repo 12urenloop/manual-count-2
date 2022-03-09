@@ -12,7 +12,7 @@ export class Lap extends BaseEntity {
   /**
    * Team linked to the lap.
    */
-  @ManyToOne(() => Team, (team) => team.laps)
+  @ManyToOne(() => Team, team => team.laps)
   team!: Team;
 
   /**

@@ -1,8 +1,9 @@
 <template>
   <div
-    :class="`team-card card card-content ${team.disabled ? 'disabled' : '' }`"
+    :class="`team-card card card-content ${team.disabled ? 'disabled' : ''}`"
     @click="teamStore.addLap(team.id)"
-     v-wave>
+    v-wave
+  >
     <!-- Team number -->
     <div class="team-card-number">
       {{ team.id }}
@@ -25,69 +26,68 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, computed } from "vue";
-import { intervalToDuration } from "date-fns";
-import { Team } from "../../types/models/team.model";
-import { useTimeStore } from "../../stores/time.store";
-import { useTeamsStore } from "../../stores/teams.store";
+  import { PropType, computed } from "vue";
+  import { intervalToDuration } from "date-fns";
+  import { Team } from "../../types/models/team.model";
+  import { useTimeStore } from "../../stores/time.store";
+  import { useTeamsStore } from "../../stores/teams.store";
 
-const props = defineProps({
-  // Team to display
-  team: {
-    type: Object as PropType<Team>,
-    required: true
-  }
-});
+  const props = defineProps({
+    // Team to display
+    team: {
+      type: Object as PropType<Team>,
+      required: true,
+    },
+  });
 
-const timeStore = useTimeStore();
-const teamStore = useTeamsStore();
+  const timeStore = useTimeStore();
+  const teamStore = useTeamsStore();
 
-// Get the time since the last lap.
-const timeSinceLastLap = computed(() => {
-  const interval = intervalToDuration({ start: timeStore.clientTime, end: props.team.lapsLastTimestamp });
+  // Get the time since the last lap.
+  const timeSinceLastLap = computed(() => {
+    const interval = intervalToDuration({ start: timeStore.clientTime, end: props.team.lapsLastTimestamp });
 
-  // Convert the interval into a human readable format (e.g. "1h 10m 15s")
-  let intervalFormatted = "";
-  intervalFormatted += interval.days && interval.days > 0 ? `${interval.days}d ` : "";
-  intervalFormatted += interval.hours && interval.hours > 0 ? `${interval.hours}h ` : "";
-  intervalFormatted += interval.minutes && interval.minutes > 0 ? `${interval.minutes}m ` : "";
-  intervalFormatted += `${interval.seconds}s`;
-  intervalFormatted = intervalFormatted.trim();
+    // Convert the interval into a human readable format (e.g. "1h 10m 15s")
+    let intervalFormatted = "";
+    intervalFormatted += interval.days && interval.days > 0 ? `${interval.days}d ` : "";
+    intervalFormatted += interval.hours && interval.hours > 0 ? `${interval.hours}h ` : "";
+    intervalFormatted += interval.minutes && interval.minutes > 0 ? `${interval.minutes}m ` : "";
+    intervalFormatted += `${interval.seconds}s`;
+    intervalFormatted = intervalFormatted.trim();
 
-  return intervalFormatted;
-});
-
+    return intervalFormatted;
+  });
 </script>
 
 <style lang="scss" scoped>
-.team-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  overflow-wrap: anywhere;
-  background-color: white;
-  color: inherit;
-  cursor: pointer;
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow-wrap: anywhere;
+    background-color: white;
+    color: inherit;
+    cursor: pointer;
 
-  &.disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-    background-color: #ababab;
-  }
+    &.disabled {
+      cursor: not-allowed;
+      pointer-events: none;
+      background-color: #ababab;
+    }
 
-  &-number {
-    font-size: 3rem;
-    font-weight: 600;
-  }
+    &-number {
+      font-size: 3rem;
+      font-weight: 600;
+    }
 
-  &-name {
-    font-size: 1.5rem;
-    font-weight: 500;
-  }
+    &-name {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
 
-  &-details {
-    margin-top: 1rem;
+    &-details {
+      margin-top: 1rem;
+    }
   }
-}
 </style>

@@ -33,7 +33,7 @@ export const useTimeStore = defineStore("time", () => {
   // Set the server time offset when the time query resolves
   watch(
     () => timeQuery.isFinished,
-    (finished) => {
+    finished => {
       if (finished) {
         serverTimeOffset.value = new Date().getTime() - serverTime.value;
       }

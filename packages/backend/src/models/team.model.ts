@@ -19,7 +19,7 @@ export class Team extends BaseEntity {
    * List of counted laps for the team.
    * This does not include duplicate counts!
    */
-  @OneToMany(() => Lap, (lap) => lap.team)
+  @OneToMany(() => Lap, lap => lap.team)
   laps!: Lap[];
 
   /**

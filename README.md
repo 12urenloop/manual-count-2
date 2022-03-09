@@ -16,7 +16,7 @@ The backend has a .env file that contains the following environment variables:
 The defaults for each variable can be found under `src/config.ts`
 
 | Variable            | Description                                            |
-|---------------------|--------------------------------------------------------|
+| ------------------- | ------------------------------------------------------ |
 | MODE                | Is used to define log type (production or development) |
 | TELRAAM_ENDPOINT    | The endpoint of the Telraam API                        |
 | PORT                | Port where the backend is served at                    |

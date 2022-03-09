@@ -7,7 +7,7 @@ export const useQueueStore = defineStore("storage", () => {
   // Get localstorage
   const queuedLaps = useLocalStorage<StoredLap[]>("queuedLaps", [], {
     deep: true,
-    listenToStorageChanges: true
+    listenToStorageChanges: true,
   });
 
   async function pushQueuedLap(lap: StoredLap) {
@@ -15,10 +15,10 @@ export const useQueueStore = defineStore("storage", () => {
       const response = await config.axios.post<BasePostResponse>(
         `/teams/${lap.teamId}/laps`,
         {
-          timestamp: lap.timestamp
+          timestamp: lap.timestamp,
         },
         {
-          method: "POST"
+          method: "POST",
         }
       );
       return response.status === 200;
@@ -42,7 +42,11 @@ export const useQueueStore = defineStore("storage", () => {
           lapsToRemove.push(lap);
         }
       }
-      console.log(`Flushed ${lapsToRemove.length+1} to backend, ${queuedLaps.value.length - lapsToRemove.length} are still in the queue`);
+      console.log(
+        `Flushed ${lapsToRemove.length + 1} to backend, ${
+          queuedLaps.value.length - lapsToRemove.length
+        } are still in the queue`
+      );
       queuedLaps.value = queuedLaps.value.filter(l => !lapsToRemove.includes(l));
     }
   }
@@ -56,6 +60,6 @@ export const useQueueStore = defineStore("storage", () => {
   return {
     queuedLaps,
     flushQueue,
-    addToQueue
+    addToQueue,
   };
 });

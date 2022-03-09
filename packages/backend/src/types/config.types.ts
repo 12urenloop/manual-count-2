@@ -1,4 +1,4 @@
-export type ConfigMode = 'development' | 'production'
+export type ConfigMode = "development" | "production";
 
 export interface Config {
   /**

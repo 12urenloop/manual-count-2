@@ -10,18 +10,18 @@ export default defineConfig({
     vue(),
 
     // Auto import components
-    components()
+    components(),
   ],
   build: {
-    outDir: '../backend/public',
+    outDir: "../backend/public",
     emptyOutDir: true,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname),
-    }
+    },
   },
   server: {
-    port: 3001
-  }
+    port: 3001,
+  },
 });

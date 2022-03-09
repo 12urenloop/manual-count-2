@@ -5,5 +5,5 @@ declare interface BasePostResponse {
 declare interface BasePostResponse<T = any> {
   code: number;
   message: string;
-  data: T
+  data: T;
 }

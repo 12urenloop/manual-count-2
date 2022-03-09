@@ -12,8 +12,8 @@ export class AxiosService {
     this.instance = axios.create({
       baseURL: `http://${config.TELRAAM_ENDPOINT}/`,
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     });
     this.telraamStatus = true;
 
@@ -38,7 +38,7 @@ export class AxiosService {
       const response = await this.instance.request<T>({
         url,
         method,
-        data
+        data,
       });
       if (response.status === 200) {
         this.setTelraamStatus(true);
@@ -46,7 +46,9 @@ export class AxiosService {
       return response;
     } catch (e: any) {
       if (e.response) {
-        server.log.error(`Could not fetch teams from Telraam but connection was made: ${e.response.status}: ${e.response.statusText}`);
+        server.log.error(
+          `Could not fetch teams from Telraam but connection was made: ${e.response.status}: ${e.response.statusText}`
+        );
       } else if (e.request) {
         server.log.error(`Could not fetch teams from Telraam, timed out after: ${e.config.timeout / 1000}s`);
         server.log.error(`Did you set the correct TELRAAM_ENDPOINT in .env?`);
@@ -60,4 +62,4 @@ export class AxiosService {
 }
 
 const axiosService = new AxiosService();
-export default axiosService
+export default axiosService;

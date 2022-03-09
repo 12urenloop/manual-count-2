@@ -9,10 +9,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useTeamsStore } from "../stores/teams.store";
-import TeamCard from "@/src/components/teams/TeamCard.vue";
-import ScreenSaver from "@/src/components/screensaver/ScreenSaver.vue";
-import ServerStatus from "@/src/components/status/serverStatus.vue";
+  import { useTeamsStore } from "../stores/teams.store";
+  import TeamCard from "@/src/components/teams/TeamCard.vue";
+  import ScreenSaver from "@/src/components/screensaver/ScreenSaver.vue";
+  import ServerStatus from "@/src/components/status/serverStatus.vue";
 
-const teamsStore = useTeamsStore();
+  const teamsStore = useTeamsStore();
 </script>

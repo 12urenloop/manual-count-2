@@ -16,7 +16,7 @@ app.use(createPinia());
 
 // Ripple effect for cards
 app.use(VWave, {
-  color: "rgb(50,50,50)"
+  color: "rgb(50,50,50)",
 });
 
 // Mount the Vue app to the root element
