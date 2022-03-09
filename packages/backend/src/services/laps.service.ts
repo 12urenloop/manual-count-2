@@ -1,8 +1,23 @@
 import { Lap } from "../models/lap.model";
-import axiosService from "./axios.service";
+import { AxiosService } from "./axios.service";
 import { server } from "../main";
 
 export class LapService {
+  // region SingleTon
+  private static Instance: LapService;
+
+  public static getInstance(): LapService {
+    if (!this.Instance) {
+      this.Instance = new LapService();
+    }
+    return this.Instance;
+  }
+
+  // endregion
+  protected createInstance(): LapService {
+    return new LapService();
+  }
+
   private queue: Lap[];
   private lock: boolean;
 
@@ -13,7 +28,7 @@ export class LapService {
 
   private async pushToTelraam(lap: Lap): Promise<boolean> {
     try {
-      const response = await axiosService.request("post", "/lap", {
+      const response = await AxiosService.getInstance().request("post", "/lap", {
         teamId: lap.team.id,
         lapSourceId: 2,
         timestamp: lap.timestamp,
@@ -63,7 +78,3 @@ export class LapService {
     }
   }
 }
-
-const lapsService = new LapService();
-
-export default lapsService;

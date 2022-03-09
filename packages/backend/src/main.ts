@@ -11,6 +11,7 @@ import { statSync } from "fs";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { Socket } from "socket.io";
+import { TeamService } from "./services/team.service";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -88,6 +89,14 @@ async function start() {
     });
 
     server.log.info("Database connection started");
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+
+  try {
+    // Start team fetching
+    TeamService.getInstance().fetch();
   } catch (err) {
     server.log.error(err);
     process.exit(1);

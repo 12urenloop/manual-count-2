@@ -4,6 +4,17 @@ import config from "../config";
 import { server } from "../main";
 
 export class AxiosService {
+  // region SingleTon
+  private static Instance: AxiosService;
+
+  public static getInstance(): AxiosService {
+    if (!this.Instance) {
+      this.Instance = new AxiosService();
+    }
+    return this.Instance;
+  }
+
+  // endregion
   private instance: AxiosInstance;
   // True if online; false if offline
   private telraamStatus: boolean;
@@ -25,6 +36,10 @@ export class AxiosService {
         });
       });
     });
+  }
+
+  public createInstance(): AxiosService {
+    return new AxiosService();
   }
 
   public setTelraamStatus(status: boolean) {
@@ -60,6 +75,3 @@ export class AxiosService {
     }
   }
 }
-
-const axiosService = new AxiosService();
-export default axiosService;

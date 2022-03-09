@@ -1,11 +1,22 @@
 import config from "../config";
 import { TelraamTeam } from "../types/team.types";
 import { Team } from "../models/team.model";
-import lapsService from "./laps.service";
-import axiosService from "./axios.service";
+import { AxiosService } from "./axios.service";
 import { server } from "../main";
+import { LapService } from "./laps.service";
 
 export class TeamService {
+  // region SingleTon
+  private static Instance: TeamService;
+
+  public static getInstance(): TeamService {
+    if (!this.Instance) {
+      this.Instance = new TeamService();
+    }
+    return this.Instance;
+  }
+
+  // endregion
   private teamCache: TelraamTeam[];
 
   // printValue
@@ -13,8 +24,11 @@ export class TeamService {
   private updatedTeams = 0;
 
   constructor() {
-    this.fetch();
     setInterval(this.fetch, config.TEAM_FETCH_INTERVAL);
+  }
+
+  public createInstance(): TeamService {
+    return new TeamService();
   }
 
   /**
@@ -125,7 +139,7 @@ export class TeamService {
   public async fetch() {
     server.log.info(`Fetching teams from telraam at ${config.TELRAAM_ENDPOINT}`);
     try {
-      const response = await axiosService.request<TelraamTeam[]>("get", `/team`, {
+      const response = await AxiosService.getInstance().request<TelraamTeam[]>("get", `/team`, {
         timeout: 5000,
         responseType: "json",
       });
@@ -136,13 +150,9 @@ export class TeamService {
       this.teamCache = response.data;
       await this.register();
       // We add a flush for our lap queue here because it's potentially faster than waiting for a push of another lap
-      lapsService.flush();
+      LapService.getInstance().flush();
     } catch (error: any) {
       return;
     }
   }
 }
-
-const teamService = new TeamService();
-
-export default teamService;
