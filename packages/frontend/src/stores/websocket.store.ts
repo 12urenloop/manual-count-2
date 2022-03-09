@@ -76,7 +76,7 @@ export const useWebsocketStore = defineStore("websocket", () => {
     }
   };
 
-  const socket = io("http://localhost:3000");
+  const socket = io(`http://${import.meta.env.VITE_SERVER_IP}:3000`);
 
   socket.on("connect", () => {
     socket.emit("telraamStatus");
