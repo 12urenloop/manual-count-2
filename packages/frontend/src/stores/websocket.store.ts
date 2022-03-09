@@ -1,19 +1,9 @@
 import { defineStore } from "pinia";
-import { toast as baseToast, Options as ToastOptions } from "bulma-toast";
 import { io } from "socket.io-client";
 import { useTeamsStore } from "@/src/stores/teams.store";
 import { useQueueStore } from "@/src/stores/queue.store";
 import { ref } from "vue";
-
-const toast = (options: ToastOptions) =>
-  baseToast({
-    animate: { in: "slideInRight", out: "slideOutRight" },
-    position: "bottom-right",
-    dismissible: true,
-    duration: 3000,
-    opacity: 0.8,
-    ...options,
-  });
+import { toast } from "@/src/helpers/toast";
 
 export const useWebsocketStore = defineStore("websocket", () => {
   const teamsStore = useTeamsStore();

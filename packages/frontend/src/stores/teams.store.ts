@@ -5,6 +5,7 @@ import { Team } from "../types/models/team.model";
 import { useTimeStore } from "./time.store";
 import config from "../config";
 import { useQueueStore } from "@/src/stores/queue.store";
+import { toast } from "@/src/helpers/toast";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
@@ -18,7 +19,6 @@ export const useTeamsStore = defineStore("teams", () => {
 
   // Add a new lap for a given team
   async function addLap(id: number) {
-    const teamIdx = teams.value.findIndex(t => t.id == id);
     try {
       const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
         timestamp: timeStore.clientTime,
@@ -28,7 +28,12 @@ export const useTeamsStore = defineStore("teams", () => {
       }
     } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
-      if (e?.request?.status !== 409) {
+      if (e?.request?.status === 409) {
+        toast({
+          type: "is-warning",
+          message: `That was a bit too quick! (${id})`,
+        });
+      } else {
         queueStore.addToQueue({
           teamId: id,
           timestamp: timeStore.clientTime,
