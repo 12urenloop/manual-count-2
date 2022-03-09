@@ -1,7 +1,26 @@
 <template>
   <div class="status">
-    <div :class="`tag is-${wsStore.backendStatus ? 'success' : 'danger'}`">Backend</div>
-    <div :class="`tag is-${wsStore.telraamStatus ? 'success' : 'danger'}`">Telraam</div>
+    <div class="field is-grouped is-grouped-multiline">
+      <div class="control">
+        <div class="tags has-addons">
+          <div :class="`tag is-dark`">Backend</div>
+          <div :class="`tag is-${wsStore.backend.online ? 'success' : 'danger'}`">
+            {{ wsStore.backend.online ? "Online" : "Offline" }}
+          </div>
+          <div v-if="!wsStore.backend.online" class="tag is-dark">{{ wsStore.backend.offlineTime }}s</div>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="tags has-addons">
+          <div :class="`tag is-dark`">Telraam</div>
+          <div :class="`tag is-${wsStore.telraam.online ? 'success' : 'danger'}`">
+            {{ wsStore.telraam.online ? "Online" : "Offline" }}
+          </div>
+          <div v-if="!wsStore.telraam.online" class="tag is-dark">{{ wsStore.telraam.offlineTime }}s</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

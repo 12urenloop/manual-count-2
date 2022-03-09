@@ -12,5 +12,4 @@
 
   useTimeStore();
   useTeamsStore();
-  useWebsocketStore();
 </script>
