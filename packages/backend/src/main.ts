@@ -1,21 +1,26 @@
-require("dotenv");
+import * as dotenv from "dotenv";
+import path from "path";
+dotenv.config({
+  path: path.resolve(__dirname, "../../../.env"),
+});
+
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import fastifyCors from "fastify-cors";
 import fastifySwagger from "fastify-swagger";
 import fastifyStatic from "fastify-static";
-import path from "path";
 import { createConnection } from "typeorm";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { Socket } from "socket.io";
 import { TeamService } from "./services/team.service";
+import config from "./config";
 
 // Create a Fastify instance
 export const server = fastify({
   disableRequestLogging: true,
   logger: {
-    level: process.env.MODE === "production" ? "info" : "debug",
+    level: config.MODE === "production" ? "info" : "debug",
     prettyPrint: true,
   },
 });
@@ -101,7 +106,7 @@ async function start() {
 
   // Start the Fastify instance
   try {
-    await server.listen(process.env?.PORT ?? 3000, "0.0.0.0");
+    await server.listen(config.PORT, "0.0.0.0");
   } catch (err) {
     server.log.error(err);
     process.exit(1);

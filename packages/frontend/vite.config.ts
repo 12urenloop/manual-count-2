@@ -21,6 +21,7 @@ export default defineConfig({
       "@": path.resolve(__dirname),
     },
   },
+  envDir: "../..",
   server: {
     port: 3001,
   },

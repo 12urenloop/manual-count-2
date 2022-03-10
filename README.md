@@ -12,10 +12,8 @@ The backend should work without being connected to Telraam and the frontend shou
 
 ### Environment variables
 
-#### Backend
-
-The backend has a .env file that contains the following environment variables:
-The defaults for each variable can be found under `src/config.ts`
+The app uses 1 .env file. The template is located in the root of the project.
+Following variables can be found in the .env file:
 
 | Variable            | Description                                            |
 | ------------------- | ------------------------------------------------------ |
@@ -24,12 +22,7 @@ The defaults for each variable can be found under `src/config.ts`
 | PORT                | Port where the backend is served at                    |
 | LAP_MIN_INTERVAL    | Min lap difference in milliseconds between 2 laps      |
 | TEAM_FETCH_INTERVAL | Time between fetches for laps in telraam, in ms.       |
-
-#### Frontend
-
-| Variable       | Description                                 |
-| -------------- | ------------------------------------------- |
-| VITE_SERVER_IP | Set external ip or webadress of the backend |
+| VITE_SERVER_IP      | Set external ip or webadress of the backend            |
 
 ### Installation
 
