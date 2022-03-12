@@ -4,6 +4,7 @@ import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
 import { LapService } from "../services/laps.service";
+import { Between } from "typeorm";
 
 export default (server: FastifyInstance) => {
   /**
@@ -23,7 +24,7 @@ export default (server: FastifyInstance) => {
     if (!team) {
       return reply.code(404).send({
         error: "Team not found.",
-        code: 404,
+        code: 404
       });
     }
 
@@ -41,7 +42,7 @@ export default (server: FastifyInstance) => {
     if (!team) {
       return reply.code(404).send({
         error: "Team not found.",
-        code: 404,
+        code: 404
       });
     }
 
@@ -49,7 +50,7 @@ export default (server: FastifyInstance) => {
     if (!body.timestamp) {
       return reply.code(400).send({
         error: "Timestamp is required.",
-        code: 400,
+        code: 400
       });
     }
 
@@ -57,17 +58,22 @@ export default (server: FastifyInstance) => {
     if (body.timestamp > Date.now()) {
       return reply.code(400).send({
         error: "Timestamp cannot be in the future.",
-        code: 400,
+        code: 400
       });
     }
 
     // Make sure the date difference between the last lap and the new one is
     // at lease the LAP_MIN_DIFFERENCE value.
-    const lastLap = await Lap.findOne({ where: { team }, order: { timestamp: "DESC" } });
-    if (lastLap && body.timestamp - lastLap.timestamp < config.LAP_MIN_DIFFERENCE) {
+    const interferingLap = await Lap.findOne({
+      where: {
+        team,
+        timestamp: Between(body.timestamp - config.LAP_MIN_DIFFERENCE, body.timestamp + config.LAP_MIN_DIFFERENCE)
+      }
+    });
+    if (interferingLap) {
       return reply.code(409).send({
-        message: `Lap must be at least ${config.LAP_MIN_DIFFERENCE}ms apart from the last lap.`,
-        code: 409,
+        message: `Lap had interference with a lap, because the difference in timestamp where less than ${config.LAP_MIN_DIFFERENCE}ms.`,
+        code: 409
       });
     }
 
@@ -84,12 +90,12 @@ export default (server: FastifyInstance) => {
     // Broadcast the lap to all connected clients.
     server.io.emit("updateTeam", {
       teamId: team.id,
-      laps: team.laps,
+      laps: team.laps
     });
 
     return reply.code(200).send({
       message: "Lap has been successfully registered.",
-      code: 200,
+      code: 200
     });
   });
 };
