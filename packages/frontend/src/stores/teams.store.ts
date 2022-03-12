@@ -6,6 +6,7 @@ import { useTimeStore } from "./time.store";
 import config from "../config";
 import { useQueueStore } from "@/src/stores/queue.store";
 import { toast } from "@/src/helpers/toast";
+import { socket } from "@/src/helpers/socket";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
@@ -51,6 +52,10 @@ export const useTeamsStore = defineStore("teams", () => {
       teams.value[teamIdx].disabled = false;
     }, 15000);
   }
+
+  socket.on("updateTeam", (team: any) => {
+    addLapFromWS(team.teamId);
+  });
 
   return {
     teamsQuery,

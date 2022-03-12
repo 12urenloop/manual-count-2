@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { io } from "socket.io-client";
 import { useTeamsStore } from "@/src/stores/teams.store";
 import { useQueueStore } from "@/src/stores/queue.store";
 import { reactive } from "vue";
 import { toast } from "@/src/helpers/toast";
+import { socket } from "@/src/helpers/socket";
 
 export const useWebsocketStore = defineStore("websocket", () => {
   const teamsStore = useTeamsStore();
@@ -76,8 +76,6 @@ export const useWebsocketStore = defineStore("websocket", () => {
     }
   };
 
-  const socket = io(`http://${import.meta.env.VITE_SERVER_IP}:3000`);
-
   socket.on("connect", () => {
     socket.emit("telraamStatus");
     queueStore.flushQueue();
@@ -87,10 +85,6 @@ export const useWebsocketStore = defineStore("websocket", () => {
   socket.on("disconnect", () => {
     setBackendStatus(false);
     setTelraamStatus(false);
-  });
-
-  socket.on("updateTeam", (team: any) => {
-    teamsStore.addLapFromWS(team.teamId);
   });
 
   socket.on("telraamStatus", setTelraamStatus);
