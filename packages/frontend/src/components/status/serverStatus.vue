@@ -3,6 +3,15 @@
     <div class="field is-grouped is-grouped-multiline">
       <div class="control">
         <div class="tags has-addons">
+          <div :class="`tag is-dark`">Time Offset</div>
+          <div :class="`tag is-${timeStore.serverTimeOffset < 3000 ? 'success' : 'danger'}`">
+            {{ timeStore.serverTimeOffset }}ms
+          </div>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="tags has-addons">
           <div :class="`tag is-dark`">Backend</div>
           <div :class="`tag is-${wsStore.backend.online ? 'success' : 'danger'}`">
             {{ wsStore.backend.online ? "Online" : "Offline" }}
@@ -25,8 +34,10 @@
 </template>
 <script lang="ts" setup>
   import { useWebsocketStore } from "../../stores/websocket.store";
+  import { useTimeStore } from "@/src/stores/time.store";
 
   const wsStore = useWebsocketStore();
+  const timeStore = useTimeStore();
 </script>
 <style lang="scss" scoped>
   .status {
