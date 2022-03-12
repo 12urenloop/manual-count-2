@@ -72,7 +72,7 @@ server.ready(err => {
 let connection = null;
 
 // Available controllers
-const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller")];
+const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller"), require("./controllers/cli.controller")];
 
 // Register each controller.
 controllers.forEach(controller => {
