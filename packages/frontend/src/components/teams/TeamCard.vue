@@ -69,6 +69,8 @@
     background-color: white;
     color: inherit;
     cursor: pointer;
+    font-size: .8rem;
+    height: 100%;
 
     &.disabled {
       cursor: not-allowed;
@@ -77,17 +79,17 @@
     }
 
     &-number {
-      font-size: 3rem;
+      font-size: 2rem;
       font-weight: 600;
     }
 
     &-name {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 500;
     }
 
     &-details {
-      margin-top: 1rem;
+      margin-top: .5rem;
     }
   }
 </style>

@@ -2,7 +2,7 @@
   <div class="columns is-mobile is-multiline">
     <ScreenSaver />
     <ServerStatus />
-    <div class="column is-12-mobile is-4-tablet is-3-desktop" v-for="(team, index) in teamsStore.teams">
+    <div class="column is-4-mobile is-3-tablet is-2-desktop" v-for="(team, index) in teamsStore.teams">
       <team-card :team="team" :key="index" />
     </div>
   </div>
