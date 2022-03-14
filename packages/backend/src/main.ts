@@ -56,7 +56,7 @@ server.register(fastifyStatic, {
 });
 
 server.get("/", async (request, reply) => {
-  reply.sendFile("index.html");
+  return reply.sendFile("index.html");
 });
 
 // Open connection for socket-io clients
