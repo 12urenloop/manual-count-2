@@ -4,9 +4,11 @@ import router from "./router";
 import App from "./App.vue";
 import "./assets/scss/application.scss";
 import VWave from "v-wave";
+import { initDB } from "./helpers/db";
 
 // Create the Vue app
 const app = createApp(App);
+initDB();
 
 // Register Vue router
 app.use(router);

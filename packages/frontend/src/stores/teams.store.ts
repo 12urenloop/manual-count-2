@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, registerRuntimeCompiler } from "vue";
 import { useAxios } from "@vueuse/integrations/useAxios";
 import { defineStore } from "pinia";
 import { Team } from "../types/models/team.model";
@@ -7,6 +7,8 @@ import config from "../config";
 import { useQueueStore } from "@/src/stores/queue.store";
 import { toast } from "@/src/helpers/toast";
 import { socket } from "@/src/helpers/socket";
+import { registerNewLap } from "../helpers/db";
+import { StoredLap } from "../types/models/queue.model";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
@@ -21,9 +23,14 @@ export const useTeamsStore = defineStore("teams", () => {
   // Add a new lap for a given team
   async function addLap(id: number) {
     try {
-      const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
+      const lap: StoredLap = {
+        teamId: id,
         timestamp: timeStore.clientTime,
+      };
+      const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
+        timestamp: lap.timestamp,
       });
+      registerNewLap(lap);
       if (response.status === 200) {
         queueStore.flushQueue();
       }
