@@ -5,6 +5,7 @@ import App from "./App.vue";
 import "./assets/scss/application.scss";
 import VWave from "v-wave";
 import { initDB } from "./helpers/db";
+import 'localforage/dist/localforage'
 
 // Create the Vue app
 const app = createApp(App);
