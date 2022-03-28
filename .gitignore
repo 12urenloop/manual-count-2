@@ -7,3 +7,6 @@ dist/
 .idea/
 .vscode/
 .iml
+
+# Emacs
+*.~undo-tree~
