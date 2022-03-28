@@ -13,6 +13,9 @@ const commands = {
     Object.keys(commands).forEach(option => {
       console.log(`  ${option}`);
     });
+  },
+  'exit': () => {
+    process.exit();
   }
 }
 
