@@ -15,6 +15,7 @@ import { Lap } from "./models/lap.model";
 import { Socket } from "socket.io";
 import { TeamService } from "./services/team.service";
 import config from "./config";
+import { Token } from "./models/token.model";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -72,7 +73,7 @@ server.ready(err => {
 let connection = null;
 
 // Available controllers
-const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller"), require("./controllers/cli.controller")];
+const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller"), require("./controllers/cli.controller"), require('./controllers/auth.controller')];
 
 // Register each controller.
 controllers.forEach(controller => {
@@ -87,7 +88,7 @@ async function start() {
       type: "sqlite",
       database: "./database.sqlite",
       synchronize: true,
-      entities: [Team, Lap],
+      entities: [Team, Lap, Token],
     });
 
     server.log.info("Database connection started");

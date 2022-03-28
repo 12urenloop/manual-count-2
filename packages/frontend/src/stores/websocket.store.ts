@@ -1,14 +1,13 @@
 import { defineStore } from "pinia";
-import { useTeamsStore } from "@/src/stores/teams.store";
 import { useQueueStore } from "@/src/stores/queue.store";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { toast } from "@/src/helpers/toast";
 import { socket } from "@/src/helpers/socket";
 
 export const useWebsocketStore = defineStore("websocket", () => {
-  const teamsStore = useTeamsStore();
   const queueStore = useQueueStore();
 
+  const token = ref<string>('');
   const backend = reactive<ServerStatus>({
     online: false,
     // Interval that is running to up the offlineTime
@@ -75,6 +74,10 @@ export const useWebsocketStore = defineStore("websocket", () => {
       });
     }
   };
+  
+  const setToken = (authToken: string) => {
+    token.value = authToken
+  }
 
   socket.on("connect", () => {
     socket.emit("telraamStatus");
@@ -91,5 +94,7 @@ export const useWebsocketStore = defineStore("websocket", () => {
   return {
     backend,
     telraam,
+    token,
+    setToken,
   };
 });
