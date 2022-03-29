@@ -1,7 +1,7 @@
 <template>
   <div v-if="shown" class="screensaver">
     <div class="screensaver__unlock" v-if="authenticated" @click="hideScreenSaver">
-      <i class="fas fa-lock"></i>UNLOCK
+      <font-awesome-icon icon="lock"></font-awesome-icon>UNLOCK
     </div>
     <p class="screensaver__text" v-if="authenticated">Click the unlock button in the top right to start counting</p>
     <p class="screensaver__text" v-else>We are authenticating the client. If this is shown for a long period. Refresh
