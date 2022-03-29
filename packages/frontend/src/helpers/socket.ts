@@ -14,16 +14,18 @@ export const authToServer = async () => {
     localStorage.setItem('auth', res.data.token)
   }
   let { setToken } = useWebsocketStore();
-  socket.emit('authClient', {
-    token: authToken
-  }, (isValid: boolean) => {
-    if (!isValid) {
-      toast({
-        message: 'Couldn\'t authenticate to server',
-        type: 'is-danger',
-      })
-      return;
-    }
-    setToken(authToken as string)
+  await new Promise<void>(res => {
+    socket.emit('authClient', {
+      token: authToken
+    }, (isValid: boolean) => {
+      if (!isValid) {
+        toast({
+          message: 'Couldn\'t authenticate to server',
+          type: 'is-danger',
+        })
+      }
+      setToken(authToken as string);
+      res();
+    })
   })
 }

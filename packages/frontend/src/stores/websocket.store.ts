@@ -79,6 +79,10 @@ export const useWebsocketStore = defineStore("websocket", () => {
     token.value = authToken
   }
 
+  const getToken = (): string => {
+    return token.value;
+  }
+
   socket.on("connect", () => {
     socket.emit("telraamStatus");
     queueStore.flushQueue();
@@ -95,6 +99,7 @@ export const useWebsocketStore = defineStore("websocket", () => {
     backend,
     telraam,
     token,
+    getToken,
     setToken,
   };
 });

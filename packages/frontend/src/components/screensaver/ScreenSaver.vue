@@ -15,7 +15,7 @@ import { useWebsocketStore } from '../../stores/websocket.store'
 
 const shown = ref(true);
 const authenticated = ref(false);
-let { token } = useWebsocketStore();
+let { getToken } = useWebsocketStore();
 
 const hideScreenSaver = () => {
   shown.value = false;
@@ -23,7 +23,7 @@ const hideScreenSaver = () => {
 
 onMounted(async () => {
   await authToServer();
-  if (token === '') {
+  if (getToken() === '') {
     return;
   }
   authenticated.value = true;

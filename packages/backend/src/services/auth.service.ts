@@ -39,6 +39,7 @@ class AuthService {
       server.log.warn(`Client(${socketId}) tried to authenticate with an invalid token`);
       return false;
     }
+    server.log.info(`Client(${socketId}) authenticated with ${token}`);
     this.connectedClients.set(socketId, token);
     return true;
   }
