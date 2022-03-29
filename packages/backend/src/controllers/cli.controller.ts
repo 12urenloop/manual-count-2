@@ -1,6 +1,6 @@
 // Controller for console commands
 import readline from "readline";
-import { stdin as input } from 'node:process';
+import { stdin as input, stdout as output } from 'node:process';
 import { TeamService } from "../services/team.service";
 
 const commands = {
@@ -19,7 +19,7 @@ const commands = {
   }
 }
 
-const rl = readline.createInterface({ input });
+const rl = readline.createInterface({ input, output, });
 if (process.stdin.isTTY)
   process.stdin.setRawMode(true);
 
