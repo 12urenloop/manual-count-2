@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { authToServer } from "../../helpers/socket";
-import { useWebsocketStore } from '../../stores/websocket.store.ts'
+import { useWebsocketStore } from '../../stores/websocket.store'
 
 const shown = ref(true);
 const authenticated = ref(false);
