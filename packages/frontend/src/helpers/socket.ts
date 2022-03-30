@@ -6,13 +6,26 @@ import { toast } from "./toast";
 // TODO: integrate authentication in socket.io creation
 export const socket = io(`http://${import.meta.env.VITE_SERVER_IP}:3000`);
 
-export const authToServer = async () => {
+const renewToken = async (): Promise<string> => {
+  const res = await config.axios.get<{ token: string }>("auth");
+  console.info(`Old token: ${localStorage.getItem("auth")}`);
+  localStorage.setItem("auth", res.data.token);
+  return res.data.token as string;
+};
+
+export const authToServer = async (tries?: number) => {
+  // Prevent loop
+  tries = (tries ?? 0) + 1;
+  if (tries == 4) {
+    toast({
+      message: `Failed to authenticate to server\nClear your session storage and try again`,
+      type: "is-warning",
+    });
+  }
+
   let authToken = localStorage.getItem("auth");
   if (!authToken) {
-    // Send request to get new token
-    const res = await config.axios.get<{ token: string }>("auth");
-    localStorage.setItem("auth", res.data.token);
-    authToken = res.data.token;
+    authToken = await renewToken();
   }
   let { setToken } = useWebsocketStore();
   await new Promise<void>(res => {
@@ -21,12 +34,14 @@ export const authToServer = async () => {
       {
         token: authToken,
       },
-      (isValid: boolean) => {
+      async (isValid: boolean) => {
         if (!isValid) {
           toast({
-            message: "Couldn't authenticate to server",
+            message: `Stored token seems invalid\nGenerating new token (attempt ${tries})`,
             type: "is-danger",
           });
+          await renewToken();
+          authToServer(tries);
           return;
         }
         setToken(authToken as string);
