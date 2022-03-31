@@ -55,7 +55,8 @@ export const useTeamsStore = defineStore("teams", () => {
     teams.value[teamIdx].lapsCount++;
     teams.value[teamIdx].lapsLastTimestamp = timeStore.clientTime;
     teams.value[teamIdx].disabled = true;
-    setInterval(() => {
+    // TODO: move away when moving to pull based to fix issue with early run
+    setTimeout(() => {
       teams.value[teamIdx].disabled = false;
     }, 15000);
   }
