@@ -45,8 +45,8 @@
     user-select: none;
 
     &__unlock {
-      align-self: end;
-      margin-right: 1%;
+      align-self: start;
+      margin-left: 1%;
       margin-top: 1%;
     }
 
