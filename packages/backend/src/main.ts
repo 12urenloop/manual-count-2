@@ -29,7 +29,7 @@ export const server = fastify({
 // Register the socket.io plugin
 server.register(fastifyIO, {
   cors: {
-    origin: true,
+    origin: "*",
   },
 });
 
@@ -73,7 +73,12 @@ server.ready(err => {
 let connection = null;
 
 // Available controllers
-const controllers = [require("./controllers/time.controller"), require("./controllers/teams.controller"), require("./controllers/cli.controller"), require('./controllers/auth.controller')];
+const controllers = [
+  require("./controllers/time.controller"),
+  require("./controllers/teams.controller"),
+  require("./controllers/cli.controller"),
+  require("./controllers/auth.controller"),
+];
 
 // Register each controller.
 controllers.forEach(controller => {
