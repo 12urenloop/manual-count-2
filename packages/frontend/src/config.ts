@@ -3,7 +3,7 @@ import axios from "axios";
 export default {
   // Default Axios Configuration
   axios: axios.create({
-    baseURL: `http://${import.meta.env.VITE_SERVER_IP}:3000`,
+    baseURL: `http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}`,
     headers: {
       "Content-Type": "application/json",
     },

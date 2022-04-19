@@ -4,7 +4,7 @@ import { useWebsocketStore } from "../stores/websocket.store";
 import { toast } from "./toast";
 
 // TODO: integrate authentication in socket.io creation
-export const socket = io(`http://${import.meta.env.VITE_SERVER_IP}:3000`);
+export const socket = io(`http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}`);
 
 const renewToken = async (): Promise<string> => {
   const res = await config.axios.get<{ token: string }>("auth");

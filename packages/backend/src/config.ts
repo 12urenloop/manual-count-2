@@ -4,7 +4,7 @@ const modes = ["development", "production"];
 
 const config: Config = {
   // Server Port
-  PORT: Number(process.env.PORT) || 3000,
+  PORT: Number(process.env.VITE_SERVER_PORT) || 3000,
 
   // Min lap difference in milliseconds between 2 laps.
   LAP_MIN_DIFFERENCE: Number(process.env.LAP_MIN_INTERVAL) || 30 * 1000,
