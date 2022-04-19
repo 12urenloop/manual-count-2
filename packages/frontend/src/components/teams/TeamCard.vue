@@ -1,6 +1,9 @@
 <template>
   <div
     :class="`team-card card card-content ${team.disabled ? 'disabled' : ''}`"
+    :style="{
+      backgroundColor: cardColor,
+    }"
     @click="teamStore.addLap(team.id)"
     v-wave
   >
@@ -40,8 +43,31 @@
     },
   });
 
+  const TARGET_COLOR = "#ff7575";
+
   const timeStore = useTimeStore();
   const teamStore = useTeamsStore();
+
+  const cardColor = computed(() => {
+    const timeInterval = Math.round((timeStore.clientTime - props.team.lapsLastTimestamp) / 1000);
+    if (timeInterval < 30) {
+      return "white";
+    }
+    if (timeInterval > 60) {
+      return TARGET_COLOR;
+    }
+    let stepSize = timeInterval - 30;
+    let redStep = (255 - parseInt(TARGET_COLOR.slice(1, 3), 16)) / 30;
+    let blueStep = (255 - parseInt(TARGET_COLOR.slice(3, 5), 16)) / 30;
+    let greenStep = (255 - parseInt(TARGET_COLOR.slice(5, 7), 16)) / 30;
+    let opacity = TARGET_COLOR.slice(7);
+
+    let redOutput = Math.round(255 - redStep * stepSize).toString(16);
+    let blueOutput = Math.round(255 - blueStep * stepSize).toString(16);
+    let greenOutput = Math.round(255 - greenStep * stepSize).toString(16);
+
+    return `#${redOutput}${blueOutput}${greenOutput}`;
+  });
 
   // Get the time since the last lap.
   const timeSinceLastLap = computed(() => {
@@ -69,8 +95,9 @@
     background-color: white;
     color: inherit;
     cursor: pointer;
-    font-size: .8rem;
+    font-size: 0.8rem;
     height: 100%;
+    transition: background 0.3s ease-in-out;
 
     &.disabled {
       cursor: not-allowed;
@@ -89,7 +116,7 @@
     }
 
     &-details {
-      margin-top: .5rem;
+      margin-top: 0.5rem;
     }
   }
 </style>
