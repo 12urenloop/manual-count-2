@@ -7,7 +7,7 @@
     "build": "cd packages/frontend && yarn run build && cd ../.. && yarn run start",
     "start": "cd packages/backend && yarn start",
     "postinstall": "lerna bootstrap",
-    "pre-commit-checks": "pretty-quick --staged"
+    "pre-commit-checks": "pretty-quick --staged --ignore-path .prettierignore"
   },
   "devDependencies": {
     "husky": "^7.0.4",

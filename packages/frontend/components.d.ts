@@ -2,13 +2,13 @@
 // We suggest you to commit this file into source control
 // Read more: https://github.com/vuejs/vue-next/pull/3399
 
-declare module "vue" {
+declare module 'vue' {
   export interface GlobalComponents {
-    ScreenSaver: typeof import("./src/components/screensaver/ScreenSaver.vue")["default"];
-    ServerStatus: typeof import("./src/components/status/serverStatus.vue")["default"];
-    StatusIcon: typeof import("./src/components/status/serverStatus.vue")["default"];
-    TeamCard: typeof import("./src/components/teams/TeamCard.vue")["default"];
+    ConfirmationModal: typeof import('./src/components/modals/ConfirmationModal.vue')['default']
+    ScreenSaver: typeof import('./src/components/screensaver/ScreenSaver.vue')['default']
+    ServerStatus: typeof import('./src/components/status/serverStatus.vue')['default']
+    TeamCard: typeof import('./src/components/teams/TeamCard.vue')['default']
   }
 }
 
-export {};
+export { }
