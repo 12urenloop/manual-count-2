@@ -1,6 +1,14 @@
 <template>
   <div class="status">
     <div class="field is-grouped is-grouped-multiline">
+      <div v-if="isMobile()" class="control">
+        <div class="tags has-addons" @click="teamStore.setShouldVibrate(!teamStore.shouldVibrate)">
+          <div :class="`tag is-dark`">Vibrate</div>
+          <div :class="`tag is-${teamStore.shouldVibrate ? 'success' : 'danger'}`">
+            {{ teamStore.shouldVibrate ? "On" : "Off" }}
+          </div>
+        </div>
+      </div>
       <div class="control">
         <div class="tags has-addons">
           <div :class="`tag is-dark`">Time Offset</div>
@@ -35,19 +43,21 @@
 <script lang="ts" setup>
   import { useWebsocketStore } from "../../stores/websocket.store";
   import { useTimeStore } from "@/src/stores/time.store";
+  import { useTeamsStore } from "@/src/stores/teams.store";
   import { isMobile } from "../../helpers/util";
 
   const wsStore = useWebsocketStore();
   const timeStore = useTimeStore();
+  const teamStore = useTeamsStore();
 </script>
 <style lang="scss" scoped>
   .status {
     position: absolute;
     top: 0.5em;
     right: 0;
-    & > div {
-      margin-left: 0.5rem;
-    }
+  }
+  .control {
+    margin-right: v-bind('isMobile() ? "0.25rem" : "0.75rem"') !important;
   }
   .tag {
     font-size: v-bind('isMobile() ? ".6rem" : ".75rem"');

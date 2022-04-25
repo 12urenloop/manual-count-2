@@ -1,4 +1,4 @@
-import { computed, registerRuntimeCompiler } from "vue";
+import { computed, ref, registerRuntimeCompiler } from "vue";
 import { useAxios } from "@vueuse/integrations/useAxios";
 import { defineStore } from "pinia";
 import { Team } from "../types/models/team.model";
@@ -9,10 +9,16 @@ import { toast } from "@/src/helpers/toast";
 import { socket } from "@/src/helpers/socket";
 import { registerNewLap } from "../helpers/db";
 import { StoredLap } from "../types/models/queue.model";
+import { isMobile } from "../helpers/util";
+import { useVibrate } from "@vueuse/core";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
   const queueStore = useQueueStore();
+  let shouldVibrate = ref<boolean>(isMobile());
+
+  // vibrate when on phone
+  const { vibrate, isSupported } = useVibrate({ pattern: 300 });
 
   // Fetch the teams
   const teamsQuery = useAxios<Team[]>("/teams", config.axios);
@@ -33,6 +39,9 @@ export const useTeamsStore = defineStore("teams", () => {
       registerNewLap(lap);
       if (response.status === 200) {
         queueStore.flushQueue();
+        if (shouldVibrate.value && isSupported) {
+          vibrate();
+        }
       }
     } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
@@ -61,6 +70,10 @@ export const useTeamsStore = defineStore("teams", () => {
     }, 30000);
   }
 
+  const setShouldVibrate = (should: boolean) => {
+    shouldVibrate.value = should;
+  };
+
   socket.on("updateTeam", (team: any) => {
     addLapFromWS(team.teamId);
   });
@@ -70,5 +83,7 @@ export const useTeamsStore = defineStore("teams", () => {
     teams,
     addLap,
     addLapFromWS,
+    shouldVibrate,
+    setShouldVibrate,
   };
 });
