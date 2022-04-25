@@ -23,7 +23,7 @@
       <div><b>Laps:</b> {{ team.lapsCount }}</div>
 
       <!-- Last seen -->
-      <div><b>Last seen:</b> {{ timeSinceLastLap }}</div>
+      <div v-if="!isMobile()"><b>Last seen:</b> {{ timeSinceLastLap }}</div>
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@
   import { Team } from "../../types/models/team.model";
   import { useTimeStore } from "../../stores/time.store";
   import { useTeamsStore } from "../../stores/teams.store";
+  import { isMobile } from "../../helpers/util";
 
   const props = defineProps({
     // Team to display
@@ -98,6 +99,7 @@
     font-size: 0.8rem;
     height: 100%;
     transition: background 0.3s ease-in-out;
+    padding: v-bind('isMobile() ? ".75rem" : "1.5rem"');
 
     &.disabled {
       cursor: not-allowed;
@@ -106,17 +108,18 @@
     }
 
     &-number {
-      font-size: 2rem;
+      font-size: v-bind("isMobile() ? '1.3rem' : '2rem'");
       font-weight: 600;
     }
 
     &-name {
-      font-size: 1.1rem;
+      font-size: v-bind("isMobile() ? '.8rem' : '1.1rem'");
       font-weight: 500;
     }
 
     &-details {
-      margin-top: 0.5rem;
+      font-size: v-bind("isMobile() ? '.7rem' : 'inherit'");
+      margin-top: v-bind("isMobile() ? '.25rem' : '0.5rem'");
     }
   }
 </style>

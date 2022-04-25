@@ -35,6 +35,7 @@
 <script lang="ts" setup>
   import { useWebsocketStore } from "../../stores/websocket.store";
   import { useTimeStore } from "@/src/stores/time.store";
+  import { isMobile } from "../../helpers/util";
 
   const wsStore = useWebsocketStore();
   const timeStore = useTimeStore();
@@ -47,5 +48,8 @@
     & > div {
       margin-left: 0.5rem;
     }
+  }
+  .tag {
+    font-size: v-bind('isMobile() ? ".6rem" : ".75rem"');
   }
 </style>
