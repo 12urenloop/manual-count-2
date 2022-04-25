@@ -77,4 +77,25 @@ export class LapService {
       this.queue.push(lap);
     }
   }
+
+  public async syncMissingLaps() {
+    const laps = await AxiosService.getInstance().request<any[]>("get", "/lap", {
+      source: 2,
+    });
+    if (laps.status !== 200) {
+      server.log.error(`Could not get laps from telraam, status: ${laps.status}`);
+      return;
+    }
+    const lapsFromTelraam = laps.data;
+    const lapsFromDatabase = await Lap.find({
+      relations: ["team"],
+    });
+    const lapsToPush = lapsFromDatabase.filter(
+      l => !lapsFromTelraam.find(tl => tl.teamId == l.team.id && tl.timestamp == l.timestamp)
+    );
+    for (const lap of lapsToPush) {
+      await this.queueLap(lap);
+    }
+    server.log.info(`Found ${lapsToPush.length} laps to push to telraam`);
+  }
 }
