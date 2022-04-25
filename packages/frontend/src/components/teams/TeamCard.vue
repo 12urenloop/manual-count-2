@@ -51,7 +51,7 @@
   const cardColor = computed(() => {
     const timeInterval = Math.round((timeStore.clientTime - props.team.lapsLastTimestamp) / 1000);
     if (timeInterval < 30) {
-      return "white";
+      return "inherit";
     }
     if (timeInterval > 60) {
       return TARGET_COLOR;
@@ -102,7 +102,7 @@
     &.disabled {
       cursor: not-allowed;
       pointer-events: none;
-      background-color: #ababab;
+      background-color: #ababab !important;
     }
 
     &-number {
