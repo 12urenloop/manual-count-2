@@ -7,7 +7,7 @@ const config: Config = {
   PORT: Number(process.env.VITE_SERVER_PORT) || 3000,
 
   // Min lap difference in milliseconds between 2 laps.
-  LAP_MIN_DIFFERENCE: Number(process.env.LAP_MIN_INTERVAL) || 30 * 1000,
+  LAP_MIN_DIFFERENCE: Number(process.env.VITE_LAP_MIN_INTERVAL) || 30 * 1000,
 
   // Endpoint for the API
   TELRAAM_ENDPOINT: process.env.TELRAAM_ENDPOINT || "localhost:8080",

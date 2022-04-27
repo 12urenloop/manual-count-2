@@ -13,5 +13,7 @@ export default {
   teams: {
     // Delay (in milliseconds) since last lap to show the lap update warning
     delayWarning: 120 * 1000,
+    minInterval: Number(import.meta.env.VITE_LAP_MIN_INTERVAL) ?? 30000,
+    minIntervalSec: (Number(import.meta.env.VITE_LAP_MIN_INTERVAL) ?? 30000) / 1000,
   },
 };

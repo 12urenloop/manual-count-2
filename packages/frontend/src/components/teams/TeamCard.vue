@@ -35,6 +35,7 @@
   import { useTimeStore } from "../../stores/time.store";
   import { useTeamsStore } from "../../stores/teams.store";
   import { isMobile } from "../../helpers/util";
+  import config from "../../config";
 
   const props = defineProps({
     // Team to display
@@ -51,17 +52,16 @@
 
   const cardColor = computed(() => {
     const timeInterval = Math.round((timeStore.clientTime - props.team.lapsLastTimestamp) / 1000);
-    if (timeInterval < 30) {
+    if (timeInterval < config.teams.minIntervalSec) {
       return "inherit";
     }
-    if (timeInterval > 60) {
+    if (timeInterval > config.teams.minIntervalSec * 2) {
       return TARGET_COLOR;
     }
-    let stepSize = timeInterval - 30;
-    let redStep = (255 - parseInt(TARGET_COLOR.slice(1, 3), 16)) / 30;
-    let blueStep = (255 - parseInt(TARGET_COLOR.slice(3, 5), 16)) / 30;
-    let greenStep = (255 - parseInt(TARGET_COLOR.slice(5, 7), 16)) / 30;
-    let opacity = TARGET_COLOR.slice(7);
+    let stepSize = timeInterval - config.teams.minIntervalSec;
+    let redStep = (255 - parseInt(TARGET_COLOR.slice(1, 3), 16)) / config.teams.minIntervalSec;
+    let blueStep = (255 - parseInt(TARGET_COLOR.slice(3, 5), 16)) / config.teams.minIntervalSec;
+    let greenStep = (255 - parseInt(TARGET_COLOR.slice(5, 7), 16)) / config.teams.minIntervalSec;
 
     let redOutput = Math.round(255 - redStep * stepSize).toString(16);
     let blueOutput = Math.round(255 - blueStep * stepSize).toString(16);

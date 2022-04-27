@@ -67,7 +67,7 @@ export const useTeamsStore = defineStore("teams", () => {
     // TODO: move away when moving to pull based to fix issue with early run
     setTimeout(() => {
       teams.value[teamIdx].disabled = false;
-    }, 30000);
+    }, config.teams.minInterval / 2);
   }
 
   const setShouldVibrate = (should: boolean) => {
