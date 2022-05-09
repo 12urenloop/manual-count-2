@@ -1,10 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
-import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
+import { StoredTeam, TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
 import { LapService } from "../services/laps.service";
 import { Between } from "typeorm";
+import authService from "../services/auth.service";
 
 export default (server: FastifyInstance) => {
   /**
@@ -24,11 +25,28 @@ export default (server: FastifyInstance) => {
     if (!team) {
       return reply.code(404).send({
         error: "Team not found.",
-        code: 404
+        code: 404,
       });
     }
 
     return team.laps;
+  });
+
+  /**
+   * Interval to fetch laps every so often (default 10sec)
+   */
+  server.ready(() => {
+    setInterval(async () => {
+      LapService.getInstance().doLapRequest();
+    }, config.LAP_FETCH_INTERVAL);
+    server.io.on("connection", socket => {
+      socket.on("pushLaps", (data: StoredTeam[]) => {
+        // Get highest timestamp
+        let clientId = authService.getClientToken(socket.id);
+        if (!clientId) return;
+        LapService.getInstance().handleLapPush(clientId, data);
+      });
+    });
   });
 
   /**
@@ -42,7 +60,7 @@ export default (server: FastifyInstance) => {
     if (!team) {
       return reply.code(404).send({
         error: "Team not found.",
-        code: 404
+        code: 404,
       });
     }
 
@@ -50,7 +68,7 @@ export default (server: FastifyInstance) => {
     if (!body.timestamp) {
       return reply.code(400).send({
         error: "Timestamp is required.",
-        code: 400
+        code: 400,
       });
     }
 
@@ -58,7 +76,7 @@ export default (server: FastifyInstance) => {
     if (body.timestamp > Date.now()) {
       return reply.code(400).send({
         error: "Timestamp cannot be in the future.",
-        code: 400
+        code: 400,
       });
     }
 
@@ -67,18 +85,18 @@ export default (server: FastifyInstance) => {
     const interferingLap = await Lap.findOne({
       where: {
         team,
-        timestamp: Between(body.timestamp - config.LAP_MIN_DIFFERENCE, body.timestamp + config.LAP_MIN_DIFFERENCE)
-      }
+        timestamp: Between(body.timestamp - config.LAP_MIN_DIFFERENCE, body.timestamp + config.LAP_MIN_DIFFERENCE),
+      },
     });
     if (interferingLap) {
       return reply.code(409).send({
         message: `Lap had interference with a lap, because the difference in timestamp where less than ${config.LAP_MIN_DIFFERENCE}ms.`,
-        code: 409
+        code: 409,
       });
     }
 
-    // Create a new lap and append it to the team.
     const lap = new Lap();
+    // Create a new lap and append it to the team.
     lap.team = team;
     lap.timestamp = body.timestamp;
 
@@ -90,12 +108,12 @@ export default (server: FastifyInstance) => {
     // Broadcast the lap to all connected clients.
     server.io.emit("updateTeam", {
       teamId: team.id,
-      laps: team.laps
+      laps: team.laps,
     });
 
     return reply.code(200).send({
       message: "Lap has been successfully registered.",
-      code: 200
+      code: 200,
     });
   });
 };

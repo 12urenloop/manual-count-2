@@ -1,8 +1,7 @@
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
 import { server } from "../main";
-import { Token } from '../models/token.model';
+import { Token } from "../models/token.model";
 
-// TODO: Should we wrap this in a JWT?
 class AuthService {
   // region SingleTon
   private static Instance: AuthService;
@@ -14,27 +13,30 @@ class AuthService {
     return this.Instance;
   }
 
-
   /**
    * Map with all connected sockets and their auth token
    */
-  private connectedClients: Map<string, string|null>;
+  private connectedClients: Map<string, string | null>;
 
-  constructor(){
+  constructor() {
     this.connectedClients = new Map();
   }
 
   public registerNewClient(socket: string) {
     if (this.connectedClients.has(socket)) {
-      server.log.error('Duplicate socket found!')
+      server.log.error("Duplicate socket found!");
     }
     this.connectedClients.set(socket, null);
   }
 
+  public handleSocketDisconnection(socket: string) {
+    this.connectedClients.delete(socket);
+  }
+
   public async authClient(socketId: string, token: string): Promise<boolean> {
     const client = await Token.findOne({
-      token
-    })
+      token,
+    });
     if (!client) {
       server.log.warn(`Client(${socketId}) tried to authenticate with an invalid token`);
       return false;
@@ -46,7 +48,7 @@ class AuthService {
 
   public async generateNewToken() {
     let token = v4();
-    let existingToken = await Token.findOne({ token, });
+    let existingToken = await Token.findOne({ token });
     while (existingToken) {
       token = v4();
       existingToken = await Token.findOne({ token });
@@ -55,6 +57,20 @@ class AuthService {
     dbToken.token = token;
     await dbToken.save();
     return token;
+  }
+
+  public getConnectedClients() {
+    // Filter all non-authed clients away
+    const authedClients = new Map<string, string>();
+    this.connectedClients.forEach((v, k) => {
+      if (!v) return;
+      authedClients.set(k, v);
+    });
+    return authedClients;
+  }
+
+  public getClientToken(socketId: string) {
+    return this.connectedClients.get(socketId);
   }
 }
 

@@ -11,6 +11,7 @@ import { registerNewLap } from "../helpers/db";
 import { StoredLap } from "../types/models/queue.model";
 import { isMobile } from "../helpers/util";
 import { useVibrate } from "@vueuse/core";
+import { storeLap } from "../helpers/laps";
 
 export const useTeamsStore = defineStore("teams", () => {
   const timeStore = useTimeStore();
@@ -33,16 +34,17 @@ export const useTeamsStore = defineStore("teams", () => {
         teamId: id,
         timestamp: timeStore.clientTime,
       };
-      const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
-        timestamp: lap.timestamp,
-      });
+      // const response = await config.axios.post<BasePostResponse>(`/teams/${id}/laps`, {
+      //   timestamp: lap.timestamp,
+      // });
+      storeLap(lap);
       registerNewLap(lap);
-      if (response.status === 200) {
-        queueStore.flushQueue();
-        if (shouldVibrate.value && isSupported) {
-          vibrate();
-        }
-      }
+      // if (response.status === 200) {
+      //   queueStore.flushQueue();
+      //   if (shouldVibrate.value && isSupported) {
+      //     vibrate();
+      //   }
+      // }
     } catch (e: any) {
       console.log(`Failed to update laps: ${e}`);
       if (e?.request?.status === 409) {

@@ -20,5 +20,9 @@ export interface Config {
    * Time between fetch for teams in telraam in ms.
    */
   TEAM_FETCH_INTERVAL: number;
+  /**
+   * Time between requests to the frontend to send newly registered laps
+   */
+  LAP_FETCH_INTERVAL: number;
   MODE: ConfigMode;
 }

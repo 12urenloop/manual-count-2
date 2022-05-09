@@ -23,6 +23,10 @@ export interface TeamsLapsRoute {
     teamId: number;
   };
 }
+export interface StoredTeam {
+  teamId: number;
+  timestamp: number;
+}
 // endregion
 // region Schema
 export interface TelraamTeam {

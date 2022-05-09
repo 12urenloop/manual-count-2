@@ -1,6 +1,13 @@
 import { Lap } from "../models/lap.model";
 import { AxiosService } from "./axios.service";
 import { server } from "../main";
+import authController from "../controllers/auth.controller";
+import authService from "./auth.service";
+import { StoredTeam } from "../types/team.types";
+import { timeStamp } from "console";
+import { Between } from "typeorm";
+import config from "../config";
+import { Team } from "../models/team.model";
 
 export class LapService {
   // region SingleTon
@@ -19,9 +26,14 @@ export class LapService {
   }
 
   private queue: Lap[];
+  /**
+   * Map that tracks the highest time of all laps of a certain client
+   */
+  private clientTimes: Map<string, number>;
   private lock: boolean;
 
   constructor() {
+    this.clientTimes = new Map();
     this.queue = [];
     this.lock = false;
   }
@@ -97,5 +109,47 @@ export class LapService {
       await this.queueLap(lap);
     }
     server.log.info(`Found ${lapsToPush.length} laps to push to telraam`);
+  }
+
+  public async doLapRequest() {
+    const clients = authService.getConnectedClients();
+    clients.forEach((token, socket) => {
+      server.io.in(socket).emit("queueLapPush", {
+        timestamp: this.clientTimes.get(token) ?? 0,
+      });
+    });
+  }
+
+  public async handleLapPush(client: string, laps: StoredTeam[]) {
+    let storedTimeStamp = this.clientTimes.get(client) ?? 0;
+    laps.forEach(async lap => {
+      if (lap.timestamp > storedTimeStamp) {
+        storedTimeStamp = lap.timestamp;
+      }
+      // Check if no lap has not interfering lap that is VITE_LAP_MIN_INTERVAL seconds before or after
+      // if no interfering lap --> store
+      const storedLap = await Lap.findOne({
+        where: {
+          team: {
+            id: lap.teamId,
+          },
+          timestamp: Between(lap.timestamp - config.LAP_MIN_DIFFERENCE, lap.timestamp + config.LAP_MIN_DIFFERENCE),
+        },
+        relations: ["team"],
+      });
+      if (storedLap) return;
+      // Check if team with this id exists
+      const team = await Team.findByIds([lap.teamId]);
+      if (!team || !team[0]) return;
+      // Lap timestamp is greater than current time
+      if (lap.timestamp > Date.now()) return;
+      const newLap = new Lap();
+      newLap.team = team[0];
+      newLap.timestamp = lap.timestamp;
+
+      await newLap.save();
+      server.log.info(`Lap ${newLap.id} pushed to MC database`);
+    });
+    this.clientTimes.set(client, storedTimeStamp);
   }
 }

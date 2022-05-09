@@ -16,5 +16,7 @@ const config: Config = {
 
   // Amount of time in milliseconds betweem each check for teams in telraam
   TEAM_FETCH_INTERVAL: Number(process.env.TEAM_FETCH_INTERVAL) || 60 * 1000,
+
+  LAP_FETCH_INTERVAL: Number(process.env.LAP_FETCH_INTERVAL) || 10 * 1000,
 };
 export default config;

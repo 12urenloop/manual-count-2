@@ -17,6 +17,7 @@ import { TeamService } from "./services/team.service";
 import config from "./config";
 import { Token } from "./models/token.model";
 import { LapService } from "./services/laps.service";
+import authService from "./services/auth.service";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -67,6 +68,10 @@ server.ready(err => {
 
   server.io.on("connection", (socket: Socket) => {
     server.log.debug(`Socket connected: ${socket.id}`);
+    authService.registerNewClient(socket.id);
+    socket.on("disconnect", () => {
+      authService.handleSocketDisconnection(socket.id);
+    });
   });
 });
 
