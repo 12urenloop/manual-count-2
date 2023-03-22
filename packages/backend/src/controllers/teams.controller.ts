@@ -3,7 +3,7 @@ import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
-import { LapService } from "../services/laps.service";
+import { TelraamLapService } from "../services/telraamlaps.service";
 import { Between, Equal } from "typeorm";
 
 export default (server: FastifyInstance) => {

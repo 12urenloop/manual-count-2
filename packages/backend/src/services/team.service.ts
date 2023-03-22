@@ -3,7 +3,7 @@ import { TelraamTeam } from "../types/team.types";
 import { Team } from "../models/team.model";
 import { AxiosService } from "./axios.service";
 import { server } from "../main";
-import { LapService } from "./laps.service";
+import { TelraamLapService } from "./telraamlaps.service";
 
 export class TeamService {
   // region SingleTon
@@ -162,7 +162,7 @@ export class TeamService {
       this.teamCache = response.data;
       await this.register();
       // We add a flush for our lap queue here because it's potentially faster than waiting for a push of another lap
-      LapService.getInstance().flush();
+      TelraamLapService.getInstance().flush();
     } catch (error: any) {
       return;
     }

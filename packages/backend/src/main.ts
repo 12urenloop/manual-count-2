@@ -15,7 +15,7 @@ import { Socket } from "socket.io";
 import { TeamService } from "./services/team.service";
 import config from "./config";
 import { Token } from "./models/token.model";
-import { LapService } from "./services/laps.service";
+import { TelraamLapService } from "./services/telraamlaps.service";
 
 // Create a Fastify instance
 export const server = fastify({
@@ -101,7 +101,7 @@ async function start() {
     // Start team fetching
     TeamService.getInstance().fetch();
     // push the missing laps from SQLite to Telraam
-    LapService.getInstance().syncMissingLaps();
+    TelraamLapService.getInstance().syncMissingLaps();
   } catch (err) {
     server.log.error(err);
     process.exit(1);
