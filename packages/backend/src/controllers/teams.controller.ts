@@ -4,7 +4,7 @@ import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
 import { LapService } from "../services/laps.service";
-import { Between } from "typeorm";
+import { Between, Equal } from "typeorm";
 
 export default (server: FastifyInstance) => {
   /**
@@ -18,7 +18,9 @@ export default (server: FastifyInstance) => {
    * Get list with available laps for a given team.
    */
   server.get<TeamsLapsRoute>("/teams/:teamId/laps", async (request, reply) => {
-    const team = await Team.findOne(request.params.teamId, { relations: ["laps"] });
+    const team = await Team.findOne({ where:{
+      id: request.params.teamId,
+    }, relations: ["laps"] });
 
     // Check if team exists
     if (!team) {
@@ -36,7 +38,7 @@ export default (server: FastifyInstance) => {
    */
   server.post<TeamsLapsAddRoute>("/teams/:teamId/laps", async (request, reply) => {
     const body = request.body || {};
-    const team = await Team.findOne(request.params.teamId);
+    const team = await Team.findOneBy({ id: request.params.teamId });
 
     // Check if team exists
     if (!team) {
@@ -66,7 +68,7 @@ export default (server: FastifyInstance) => {
     // at lease the LAP_MIN_DIFFERENCE value.
     const interferingLap = await Lap.findOne({
       where: {
-        team,
+        team: Equal(team),
         timestamp: Between(body.timestamp - config.LAP_MIN_DIFFERENCE, body.timestamp + config.LAP_MIN_DIFFERENCE)
       }
     });

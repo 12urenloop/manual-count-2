@@ -32,7 +32,7 @@ class AuthService {
   }
 
   public async authClient(socketId: string, token: string): Promise<boolean> {
-    const client = await Token.findOne({
+    const client = await Token.findOneBy({
       token
     })
     if (!client) {
@@ -46,10 +46,10 @@ class AuthService {
 
   public async generateNewToken() {
     let token = v4();
-    let existingToken = await Token.findOne({ token, });
+    let existingToken = await Token.findOneBy({ token });
     while (existingToken) {
       token = v4();
-      existingToken = await Token.findOne({ token });
+      existingToken = await Token.findOneBy({ token });
     }
     const dbToken = new Token();
     dbToken.token = token;

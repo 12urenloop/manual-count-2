@@ -6,10 +6,9 @@ dotenv.config({
 
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
-import fastifyCors from "fastify-cors";
-import fastifySwagger from "fastify-swagger";
-import fastifyStatic from "fastify-static";
-import { createConnection } from "typeorm";
+import fastifyCors from "@fastify/cors";
+import fastifyStatic from "@fastify/static";
+import { DataSource } from "typeorm";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
 import { Socket } from "socket.io";
@@ -23,7 +22,13 @@ export const server = fastify({
   disableRequestLogging: true,
   logger: {
     level: config.MODE === "production" ? "info" : "debug",
-    prettyPrint: true,
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
   },
 });
 
@@ -37,19 +42,6 @@ server.register(fastifyIO, {
 // Register the cors plugin
 server.register(fastifyCors, {
   origin: true,
-});
-
-// Register szqgger plugin
-server.register(fastifySwagger, {
-  routePrefix: "/swagger",
-  exposeRoute: true,
-  swagger: {
-    info: {
-      title: "Manual Count API",
-      description: "API for Manual Count",
-      version: "1.0.0",
-    },
-  },
 });
 
 server.register(fastifyStatic, {
@@ -71,7 +63,7 @@ server.ready(err => {
 });
 
 // Database connection
-let connection = null;
+let dataSource = null;
 
 // Available controllers
 const controllers = [
@@ -90,12 +82,14 @@ controllers.forEach(controller => {
 async function start() {
   // Start the database connection
   try {
-    connection = await createConnection({
+    dataSource = new DataSource({
       type: "sqlite",
       database: "./database.sqlite",
       synchronize: true,
       entities: [Team, Lap, Token],
-    });
+    })
+
+    await dataSource.initialize();
 
     server.log.info("Database connection started");
   } catch (err) {
@@ -115,7 +109,7 @@ async function start() {
 
   // Start the Fastify instance
   try {
-    await server.listen(config.PORT, "0.0.0.0");
+    await server.listen({port: config.PORT});
   } catch (err) {
     server.log.error(err);
     process.exit(1);

@@ -40,7 +40,7 @@ export class TeamService {
    */
   private async moveTeamsAtId(oldId: number, teamName: string): Promise<boolean> {
     // fetch data of stored @ old id
-    const teamAtOldId = await Team.findOne({ id: oldId });
+    const teamAtOldId = await Team.findOneBy({ id: oldId });
     if (!teamAtOldId) {
       server.log.warn(`moveTeamAtId: Could not find team with id ${oldId} (name: ${teamName})`);
       return true;
@@ -51,7 +51,7 @@ export class TeamService {
       server.log.warn(`moveTeamAtId: Could not find new id for team with name ${teamName}, Probably deleted`);
       return true;
     }
-    const teamAtNewId = await Team.findOne({ id: newInfo.id });
+    const teamAtNewId = await Team.findOneBy({ id: newInfo.id });
     if (!teamAtNewId) {
       // No team at new id, Delete from database to make space for new team
       server.log.warn(`moveTeamAtId: Could not find team with id ${newInfo.id} (name: ${teamName} | oldId: ${oldId})`);
@@ -95,7 +95,7 @@ export class TeamService {
    */
   private async clearIdForTeam(team: TelraamTeam) {
     // Search if a team with this name already exists
-    const existingTeam = await Team.findOne({ id: team.id });
+    const existingTeam = await Team.findOneBy({ id: team.id });
     if (existingTeam) {
       if (existingTeam.name === team.name) {
         server.log.debug(`clearIdForTeam: Team ${team.name} already exists`);
@@ -110,7 +110,7 @@ export class TeamService {
       if (!needsUpdate) return false;
       // We need to update the team with the new id
       // Search team where all our info is stored
-      const teamInfo = await Team.findOne({ name: team.name });
+      const teamInfo = await Team.findOneBy({ name: team.name });
       if (!teamInfo) {
         server.log.warn(`clearIdForTeam: Could not find team with name ${team.name}`);
         return true;
