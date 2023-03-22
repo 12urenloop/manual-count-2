@@ -12,5 +12,8 @@
     "lib": ["esnext"],
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+  "ts-node": {
+    "files": true
+  },
+  "include": ["src/**/*.ts", "src/types/*.d.ts"]
 }
