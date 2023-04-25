@@ -3,8 +3,9 @@ import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
 import config from "../config";
-import { LapService } from "../services/laps.service";
+import { TelraamLapService } from "../services/telraamlaps.service";
 import { Between, Equal } from "typeorm";
+import { lapStoreService } from "../services/lapsStore.service";
 
 export default (server: FastifyInstance) => {
   /**
@@ -64,30 +65,10 @@ export default (server: FastifyInstance) => {
       });
     }
 
-    // Make sure the date difference between the last lap and the new one is
-    // at lease the LAP_MIN_DIFFERENCE value.
-    const interferingLap = await Lap.findOne({
-      where: {
-        team: Equal(team),
-        timestamp: Between(body.timestamp - config.LAP_MIN_DIFFERENCE, body.timestamp + config.LAP_MIN_DIFFERENCE)
-      }
-    });
-    if (interferingLap) {
-      return reply.code(409).send({
-        message: `Lap had interference with a lap, because the difference in timestamp where less than ${config.LAP_MIN_DIFFERENCE}ms.`,
-        code: 409
-      });
-    }
-
-    // Create a new lap and append it to the team.
-    const lap = new Lap();
-    lap.team = team;
-    lap.timestamp = body.timestamp;
-
-    // Attempt to save the lap
-    await lap.save();
-
-    LapService.getInstance().queueLap(lap);
+    lapStoreService.scheduleLap({
+      teamId: request.params.teamId,
+      timestamp: body.timestamp,
+    })
 
     // Broadcast the lap to all connected clients.
     server.io.emit("updateTeam", {

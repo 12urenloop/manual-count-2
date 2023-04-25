@@ -2,20 +2,20 @@ import { Lap } from "../models/lap.model";
 import { AxiosService } from "./axios.service";
 import { server } from "../main";
 
-export class LapService {
+export class TelraamLapService {
   // region SingleTon
-  private static Instance: LapService;
+  private static Instance: TelraamLapService;
 
-  public static getInstance(): LapService {
+  public static getInstance(): TelraamLapService {
     if (!this.Instance) {
-      this.Instance = new LapService();
+      this.Instance = new TelraamLapService();
     }
     return this.Instance;
   }
 
   // endregion
-  protected createInstance(): LapService {
-    return new LapService();
+  protected createInstance(): TelraamLapService {
+    return new TelraamLapService();
   }
 
   private queue: Lap[];

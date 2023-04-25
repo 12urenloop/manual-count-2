@@ -2,7 +2,7 @@
 import readline from "readline";
 import { stdin as input, stdout as output } from "node:process";
 import { TeamService } from "../services/team.service";
-import { LapService } from "../services/laps.service";
+import { TelraamLapService } from "../services/telraamlaps.service";
 
 const commands = {
   fetchTeams: () => {
@@ -10,7 +10,7 @@ const commands = {
     return TeamService.getInstance().fetch();
   },
   syncLaps: () => {
-    return LapService.getInstance().syncMissingLaps();
+    return TelraamLapService.getInstance().syncMissingLaps();
   },
   help: () => {
     console.log("Available commands:");
