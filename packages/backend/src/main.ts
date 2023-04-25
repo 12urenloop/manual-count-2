@@ -109,7 +109,7 @@ async function start() {
 
   // Start the Fastify instance
   try {
-    await server.listen({port: config.PORT});
+    await server.listen({port: config.PORT, host: "0.0.0.0"});
   } catch (err) {
     server.log.error(err);
     process.exit(1);
