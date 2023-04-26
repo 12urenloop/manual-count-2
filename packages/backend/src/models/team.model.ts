@@ -1,4 +1,4 @@
-import { AfterLoad, BaseEntity, Column, Entity, Equal, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { AfterInsert, AfterLoad, AfterUpdate, BaseEntity, Column, Entity, Equal, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Lap } from "./lap.model";
 
 @Entity({ name: "teams" })
@@ -39,8 +39,10 @@ export class Team extends BaseEntity {
    * This function is executed during each find() or similar functions.
    */
   @AfterLoad()
+  @AfterUpdate()
+  @AfterInsert()
   async calculateLapsCount() {
-    this.lapsCount = await Lap.count({ where: { team: Equal(this) } });
+    this.lapsCount = await Lap.countBy({team: { id: this.id }})
   }
 
   /**
@@ -48,8 +50,10 @@ export class Team extends BaseEntity {
    * This function is executed during each find() or similar functions.
    */
   @AfterLoad()
+  @AfterUpdate()
+  @AfterInsert()
   async calculateLapsLastTimestamp() {
-    const lastLap = await Lap.findOne({ where: { team: Equal(this) }, order: { timestamp: "DESC" } });
+    const lastLap = await Lap.findOne({ where: { team: {id: this.id} }, order: { timestamp: "DESC" } });
 
     this.lapsLastTimestamp = lastLap?.timestamp || 0;
   }
