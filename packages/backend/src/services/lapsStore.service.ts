@@ -16,6 +16,7 @@ class LapStoreService {
       server.log.warn(`A lap was scheduled for an unknown teamId: ${lapInfo.teamId}`)
       return;
     }
+    server.log.debug(`Pushing lap from queue: ${team.id} | ${lapInfo.timestamp}`);
 
     // Make sure the date difference between the last lap and the new one is
     // at lease the LAP_MIN_DIFFERENCE value.
@@ -48,7 +49,7 @@ class LapStoreService {
   getInterfereringDBLap(team: Team, timestamp: number) {
     return Lap.findOne({
       where: {
-        team: Equal(team),
+        team: { id: team.id },
         timestamp: Between(timestamp - config.LAP_MIN_DIFFERENCE, timestamp + config.LAP_MIN_DIFFERENCE)
       }
     });
@@ -59,6 +60,7 @@ class LapStoreService {
   }
 
   scheduleLap(lap: Laps.QueuedLap) {
+    server.log.debug(`Adding new lap to queue: ${lap.teamId} | ${lap.timestamp}`);
     this.queue.push(lap);
     this.flushQueue();
   }

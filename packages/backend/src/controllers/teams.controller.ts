@@ -1,10 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { Lap } from "../models/lap.model";
 import { Team } from "../models/team.model";
 import { TeamsLapsAddRoute, TeamsLapsRoute, TeamsRoute } from "../types/team.types";
-import config from "../config";
-import { TelraamLapService } from "../services/telraamlaps.service";
-import { Between, Equal } from "typeorm";
 import { lapStoreService } from "../services/lapsStore.service";
 
 export default (server: FastifyInstance) => {
@@ -65,7 +61,7 @@ export default (server: FastifyInstance) => {
       });
     }
 
-    const interferinLap = await lapStoreService.getInterfereringDBLap(team, body.timestamp) ?? lapStoreService.getInterfereringQueueLap(team, body.timestamp);
+    const interferinLap = (await lapStoreService.getInterfereringDBLap(team, body.timestamp)) ?? lapStoreService.getInterfereringQueueLap(team, body.timestamp);
     if (interferinLap) {
       return reply.code(400).send({
         error: "Found an interfering lap",
