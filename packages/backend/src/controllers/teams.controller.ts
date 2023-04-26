@@ -12,7 +12,7 @@ export default (server: FastifyInstance) => {
    * Get list with all available teams.
    */
   server.get<TeamsRoute>("/teams", async (request, reply) => {
-    return Team.find();
+    return Team.createQueryBuilder("t").leftJoinAndSelect("t.laps", "laps").getMany();
   });
 
   /**
