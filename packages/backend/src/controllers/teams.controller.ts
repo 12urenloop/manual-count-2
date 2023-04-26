@@ -63,9 +63,9 @@ export default (server: FastifyInstance) => {
 
     const interferinLap = (await lapStoreService.getInterfereringDBLap(team, body.timestamp)) ?? lapStoreService.getInterfereringQueueLap(team, body.timestamp);
     if (interferinLap) {
-      return reply.code(400).send({
+      return reply.code(409).send({
         error: "Found an interfering lap",
-        code: 400
+        code: 409
       });
     }
 
