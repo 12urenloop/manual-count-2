@@ -19,12 +19,7 @@ class LapStoreService {
 
     // Make sure the date difference between the last lap and the new one is
     // at lease the LAP_MIN_DIFFERENCE value.
-    const interferingLap = await Lap.findOne({
-      where: {
-        team: Equal(team),
-        timestamp: Between(lapInfo.timestamp - config.LAP_MIN_DIFFERENCE, lapInfo.timestamp + config.LAP_MIN_DIFFERENCE)
-      }
-    });
+    const interferingLap = await this.getInterfereringDBLap(team, lapInfo.timestamp);
     if (interferingLap) {
       server.log.info(`Skipped lap for ${lapInfo.teamId} because there was another lap counted in the diff interval`);
       return;
@@ -48,6 +43,19 @@ class LapStoreService {
       await this.pushLap();
     }
     this.busy = false;
+  }
+
+  getInterfereringDBLap(team: Team, timestamp: number) {
+    return Lap.findOne({
+      where: {
+        team: Equal(team),
+        timestamp: Between(timestamp - config.LAP_MIN_DIFFERENCE, timestamp + config.LAP_MIN_DIFFERENCE)
+      }
+    });
+  }
+
+  getInterfereringQueueLap(team: Team, timestamp: number) {
+    return this.queue.find(l => l.teamId === team.id && Math.abs(l.timestamp - timestamp) < config.LAP_MIN_DIFFERENCE);
   }
 
   scheduleLap(lap: Laps.QueuedLap) {
