@@ -11,11 +11,35 @@ import fastifyStatic from "@fastify/static";
 import { DataSource } from "typeorm";
 import { Team } from "./models/team.model";
 import { Lap } from "./models/lap.model";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { TeamService } from "./services/team.service";
 import config from "./config";
 import { Token } from "./models/token.model";
 import { TelraamLapService } from "./services/telraamlaps.service";
+
+declare module "fastify" {
+  interface ServerTimestamp {
+    timestamp: number;
+  }
+  interface ServerTeam {
+    teamId: number;
+    laps: Lap[];
+  }
+  interface ServerToClientEvents {
+    telraamStatus: (status: boolean) => void;
+    time: (time: ServerTimestamp) => void;
+    updateTeam: (team: ServerTeam) => void;
+  }
+  interface ClientAuth {
+    token: string
+  }
+  interface SocketData {
+    authClient: (data: ClientAuth, callback:(success: boolean) => void) => void;
+  }
+  interface FastifyInstance {
+    io: Server<SocketData, ServerToClientEvents>;
+  }
+}
 
 // Create a Fastify instance
 export const server = fastify({
