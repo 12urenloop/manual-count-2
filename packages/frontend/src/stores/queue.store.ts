@@ -28,6 +28,11 @@ export const useQueueStore = defineStore("storage", () => {
   }
 
   async function flushQueue() {
+    const cutoff_time = new Date().setDate(new Date().getDate() - 30);
+    while (queuedLaps.value.length > 0 && queuedLaps.value.at(0)!.timestamp < cutoff_time) {
+      console.warn("Queued lap is too old, discarding it");
+      queuedLaps.value.shift();
+    }
     if (queuedLaps.value.length > 0) {
       // Get first element
       const queuedLap = queuedLaps.value.at(0);
