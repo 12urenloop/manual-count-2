@@ -2,17 +2,20 @@
   "name": "@12urenloop/manual-count-2",
   "version": "1.0.0",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "dev": "lerna run dev --stream --parallel",
+    "dev": "lerna run dev --stream",
     "build": "cd packages/frontend && yarn run build && cd ../.. && yarn run start",
     "start": "cd packages/backend && yarn start",
-    "postinstall": "lerna bootstrap",
     "pre-commit-checks": "pretty-quick --staged --ignore-path .prettierignore"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
-    "husky": "^7.0.4",
-    "lerna": "^4.0.0",
-    "prettier": "^2.5.1",
-    "pretty-quick": "^3.1.3"
+    "husky": "^9.0.11",
+    "lerna": "^8.1.2",
+    "prettier": "^3.2.5",
+    "pretty-quick": "^4.0.0"
   }
 }

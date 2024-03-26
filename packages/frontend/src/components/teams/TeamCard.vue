@@ -72,14 +72,14 @@
 
   // Get the time since the last lap.
   const timeSinceLastLap = computed(() => {
-    const interval = intervalToDuration({ start: timeStore.clientTime, end: props.team.lapsLastTimestamp });
+    const interval = intervalToDuration({ start: props.team.lapsLastTimestamp, end: timeStore.clientTime });
 
     // Convert the interval into a human readable format (e.g. "1h 10m 15s")
     let intervalFormatted = "";
     intervalFormatted += interval.days && interval.days > 0 ? `${interval.days}d ` : "";
     intervalFormatted += interval.hours && interval.hours > 0 ? `${interval.hours}h ` : "";
     intervalFormatted += interval.minutes && interval.minutes > 0 ? `${interval.minutes}m ` : "";
-    intervalFormatted += `${interval.seconds}s`;
+    intervalFormatted += interval.seconds ? `${interval.seconds}s` : "0s";
     intervalFormatted = intervalFormatted.trim();
 
     return intervalFormatted;
