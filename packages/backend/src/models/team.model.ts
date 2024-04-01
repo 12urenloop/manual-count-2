@@ -16,7 +16,7 @@ export class Team extends BaseEntity {
   name!: string;
 
   @Column()
-  jacketNr: number;
+  jacketNr: string;
 
   /**
    * List of counted laps for the team.

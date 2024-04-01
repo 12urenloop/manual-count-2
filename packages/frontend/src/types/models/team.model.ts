@@ -1,7 +1,7 @@
 export interface Team {
   id: number;
   name: string;
-  jacketNr: number;
+  jacketNr: string;
   disabled: boolean;
   lapsCount: number;
   lapsLastTimestamp: number;

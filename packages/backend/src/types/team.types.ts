@@ -28,6 +28,6 @@ export interface TeamsLapsRoute {
 export interface TelraamTeam {
   id: number;
   name: string;
-  jacketNr: number;
+  jacketNr: string;
 }
 // endregion
