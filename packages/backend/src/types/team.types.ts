@@ -1,5 +1,5 @@
 // region API
-export interface TeamsRoute {}
+export interface TeamsRoute { }
 
 export interface TeamsCreateRoute {
   Body: {
@@ -28,5 +28,6 @@ export interface TeamsLapsRoute {
 export interface TelraamTeam {
   id: number;
   name: string;
+  jacketNr: string;
 }
 // endregion
