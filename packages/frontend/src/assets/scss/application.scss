@@ -1,23 +1,18 @@
-// Bulma variable overrides
 $primary: #ff7f00;
 $text: #172940;
-$link: $primary;
-$title-color: $text;
 
-$family-sans-serif: "Inter", sans-serif;
-
-$radius-small: 8px;
-$radius: 8px;
-
-$card-radius: 16px;
-$card-background-color: #fff;
-
-$modal-card-head-background-color: white;
-$modal-card-head-border-bottom: 2px solid whitesmoke;
-$modal-card-foot-border-top: 2px solid whitesmoke;
-
-// Include Bulma SCSS
-@import "bulma/bulma";
+@use "bulma/sass" as bulma with ( // Bulma variable overrides
+  $primary: $primary,
+  $text: $text,
+  $link: $primary,
+  $title-color: $text,
+  $family-sans-serif: '"Inter", "sans-serif"',
+  $radius-small: 8px,
+  $radius: 8px,
+  $card-radius: 16px,
+  $card-background-color: #fff,
+  $modal-card-head-background-color: white);
+@use "bulma/sass/utilities/mixins";
 
 html {
   height: 100%;
@@ -25,7 +20,7 @@ html {
 }
 
 body {
-  background-color: $white-bis;
+  background-color: bulma.$white-bis;
   height: 100%;
   width: 100%;
 
@@ -37,7 +32,7 @@ body {
   ::selection,
   ::-moz-selection {
     background: $primary;
-    color: $white;
+    color: bulma.$white;
   }
 }
 
@@ -48,7 +43,7 @@ body {
     padding-top: 3rem;
     padding-bottom: 3rem;
 
-    @include until($desktop) {
+    @include mixins.until(bulma.$desktop) {
       padding-left: 0.75rem;
       padding-right: 0.75rem;
     }
@@ -57,5 +52,5 @@ body {
 
 // TODO: this must be removed
 .card {
-  background-color: $card-background-color;
+  background-color: bulma.$card-background-color;
 }

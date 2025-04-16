@@ -11,6 +11,7 @@ import VWave from "v-wave";
 
 import 'animate.css';
 import 'localforage/dist/localforage'
+import "bulma/bulma.scss";
 import "./assets/scss/application.scss";
 
 
