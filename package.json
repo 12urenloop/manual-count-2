@@ -4,8 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "pn -r --stream dev",
-    "build": "pn -r --stream build && cd ../.. && pn -r --stream start",
+    "dev": "pnpm -r --stream dev",
+    "build": "pnpm -r --stream build && cd ../.. && pnpm -r --stream start",
     "pre-commit-checks": "pretty-quick --staged --ignore-path .prettierignore"
   },
   "workspaces": [

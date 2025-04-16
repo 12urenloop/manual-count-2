@@ -33,10 +33,6 @@ export class TeamService {
 
   /**
    * Moves a team at an oldId to his new id based on the new teamList
-   * @param teams
-   * @param oldId
-   * @param teamName
-   * @return {boolean} true if the new team at oldid is not moved
    */
   private async moveTeamsAtId(oldId: number, teamName: string): Promise<boolean> {
     // fetch data of stored @ old id
@@ -90,14 +86,16 @@ export class TeamService {
 
   /**
    * Checks if the team's id is updated, if so it moves the other teams around to make sure we can update this team
-   * @param team
-   * @return {boolean} true if the team needs to be created
    */
   private async clearIdForTeam(team: TelraamTeam) {
     // Search if a team with this name already exists
     const existingTeam = await Team.findOneBy({ id: team.id });
     if (existingTeam) {
       if (existingTeam.name === team.name) {
+        if (existingTeam.jacketNr !== team.jacketNr) {
+          server.log.debug(`clearIdForTeam: Team ${team.name} already exists with different jacket number`);
+          Team.update({ id: team.id }, { jacketNr: team.jacketNr });
+        }
         server.log.debug(`clearIdForTeam: Team ${team.name} already exists`);
         // Do nothing
         return false;
@@ -137,6 +135,7 @@ export class TeamService {
           const DbTeam = new Team();
           DbTeam.id = team.id;
           DbTeam.name = team.name;
+          DbTeam.jacketNr = team.jacketNr;
 
           // Attempt to save the team.
           await DbTeam.save();
@@ -148,7 +147,8 @@ export class TeamService {
     }
   }
 
-  public async fetch() {
+  // Uses a arrow function to properly handle the `this` context in the interval function
+  public fetch = async () => {
     server.log.info(`Fetching teams from telraam at ${config.TELRAAM_ENDPOINT}`);
     try {
       const response = await AxiosService.getInstance().request<TelraamTeam[]>("get", `/team`, {

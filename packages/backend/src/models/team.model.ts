@@ -15,6 +15,9 @@ export class Team extends BaseEntity {
   @Column({ unique: true })
   name!: string;
 
+  @Column()
+  jacketNr: string;
+
   /**
    * List of counted laps for the team.
    * This does not include duplicate counts!
@@ -42,7 +45,7 @@ export class Team extends BaseEntity {
   @AfterUpdate()
   @AfterInsert()
   async calculateLapsCount() {
-    this.lapsCount = await Lap.countBy({team: { id: this.id }})
+    this.lapsCount = await Lap.countBy({ team: { id: this.id } })
   }
 
   /**
@@ -53,7 +56,7 @@ export class Team extends BaseEntity {
   @AfterUpdate()
   @AfterInsert()
   async calculateLapsLastTimestamp() {
-    const lastLap = await Lap.findOne({ where: { team: {id: this.id} }, order: { timestamp: "DESC" } });
+    const lastLap = await Lap.findOne({ where: { team: { id: this.id } }, order: { timestamp: "DESC" } });
 
     this.lapsLastTimestamp = lastLap?.timestamp || 0;
   }

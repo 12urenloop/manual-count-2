@@ -5,7 +5,7 @@
     <div class="card-content">
       <!-- Team number -->
       <div class="team-card-number">
-        {{ team.id }}
+        {{ team.jacketNr }}
       </div>
 
       <!-- Team name -->
@@ -48,7 +48,6 @@ const timeStore = useTimeStore();
 const teamStore = useTeamsStore();
 
 const cardColor = computed(() => {
-  console.log(config)
   const timeInterval = Math.round((timeStore.clientTime - props.team.lapsLastTimestamp) / 1000);
   if (timeInterval < config.teams.minIntervalSec) {
     return "inherit";
