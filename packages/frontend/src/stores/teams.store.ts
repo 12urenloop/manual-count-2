@@ -1,5 +1,5 @@
 import { computed, ref, registerRuntimeCompiler } from "vue";
-import { useAxios } from "@vueuse/integrations/useAxios";
+import { useAxios } from "@vueuse/integrations/useAxios.mjs";
 import { defineStore } from "pinia";
 import { Team } from "../types/models/team.model";
 import { useTimeStore } from "./time.store";

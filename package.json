@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -r --stream dev",
-    "build": "pnpm -r --stream build && cd ../.. && pnpm -r --stream start",
+    "build": "pnpm -r --stream build && pnpm -r --stream start",
     "pre-commit-checks": "pretty-quick --staged --ignore-path .prettierignore"
   },
   "workspaces": [
