@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getStringVal = (envKey: string, defaultVal: string) => {
   const envValue = import.meta.env[envKey];
-  return (!envValue || envValue == "") ? defaultVal : envKey
+  return (!envValue || envValue == "") ? defaultVal : envValue
 }
 
 export default {

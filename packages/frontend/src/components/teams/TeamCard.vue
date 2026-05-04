@@ -50,7 +50,7 @@ const teamStore = useTeamsStore();
 const cardColor = computed(() => {
   const timeInterval = Math.round((timeStore.clientTime - props.team.lapsLastTimestamp) / 1000);
   if (timeInterval < config.teams.minIntervalSec) {
-    return "inherit";
+    return "";
   }
   if (timeInterval > config.teams.minIntervalSec * 2) {
     return TARGET_COLOR;
