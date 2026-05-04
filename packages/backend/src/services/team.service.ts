@@ -55,6 +55,7 @@ export class TeamService {
       return false;
     }
     const teamWithHighestId = await Team.findOne({
+      where: {},
       order: {
         id: "DESC",
       },
