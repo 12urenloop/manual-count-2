@@ -29,7 +29,7 @@ Following variables can be found in the .env file:
 
 Install the dependencies:
 
-`yarn install` or `npm install`
+`pnpm install --frozen-lockfile`
 
 ### Build
 
@@ -38,9 +38,9 @@ The frontend is served via fastify-static.
 **If you already built the files for production you can skip this step.**
 
 To build the files for production run:
-`yarn build` or `npm run build` in the root directory
+`pnpm run build` in the root directory
 
-After building the files you can just run `yarn start` or `npm run start` to start the backend with the previously built
+After building the files you can just run `pnpm run start` to start the backend with the previously built
 frontend.
 
 ## Endpoint
@@ -57,4 +57,4 @@ There are also extra paths to extract data or do manipulate your browsers storag
 
 To serve both the front and backend you can use the following commands:
 
-`yarn dev` or ` npm run dev`
+`pnpm run dev`
