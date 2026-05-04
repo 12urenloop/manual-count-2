@@ -10,3 +10,4 @@ dist/
 
 # Emacs
 *.~undo-tree~
+/packages/backend/public/index.html

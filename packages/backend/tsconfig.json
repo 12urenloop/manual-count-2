@@ -9,11 +9,18 @@
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
+    "preserveSymlinks": false,
+    "skipLibCheck": true,
+    "lib": [
+      "esnext"
+    ],
     "outDir": "./dist"
   },
   "ts-node": {
     "files": true
   },
-  "include": ["src/**/*.ts", "src/types/*.d.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/types/*.d.ts"
+  ]
 }
